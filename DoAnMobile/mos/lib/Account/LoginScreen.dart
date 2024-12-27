@@ -51,12 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text("Login Failed"),
-          content: const Text("Invalid username or password."),
+          title: const Text("Đăng nhập thất bại!"),
+          content: const Text("Username hoặc password không tồn tại."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Try Again"),
+              child: const Text("Thử lại"),
             ),
           ],
         ),
@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("MOS Support System"),
+        title: const Text("HỆ THỐNG HỖ TRỢ CUỘC THI MOS"),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Welcome to the MOS Support System!',
+              'XIN CHÀO',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Please log in to start the support',
+              'Đăng nhập tại đây',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _login,
-                    child: const Text("Login"),
+                    child: const Text("Đăng nhập"),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Action khi quên mật khẩu hoặc cần trợ giúp
                 Navigator.pushNamed(context, '/help');
               },
-              child: const Text("Forgot password? Contact admin"),
+              child: const Text("Quên mật khẩu"),
             ),
           ],
         ),

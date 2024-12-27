@@ -4,10 +4,6 @@ import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-void main() {
-  runApp(const CameraApp());
-}
-
 class CameraApp extends StatelessWidget {
   const CameraApp({super.key});
 
@@ -74,18 +70,22 @@ class _CameraScreenState extends State<CameraScreen> {
     }
     return null;
   }
-
-  // Hàm mở camera và chụp ảnh
-  // Future<void> _openCamera() async {
-  //   final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-
-  //   if (photo != null) {
-  //     setState(() {
-  //       _image = File(photo.path); // Lưu đường dẫn ảnh
-  //     });
-  //   }
-  // }
     
+  Future<void> _openlib() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+    
+    if (photo != null) {
+      File? croppedImage = await _cropImage(File(photo.path));
+      _imageSrc = File(photo.path); // Lưu đường dẫn ảnh nguồn để sửa
+
+      if (croppedImage != null) {
+        setState(() {
+          _image = croppedImage; // Sử dụng ảnh đã cắt
+        });
+      }
+    }
+  }
+
   Future<void> _openCamera() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     
@@ -223,15 +223,6 @@ class _CameraScreenState extends State<CameraScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          // children: <Widget>[
-          //   _image == null
-          //       ? const Text('No image selected.')
-          //       : Image.file(
-          //           _image!,
-          //           width: 300,
-          //           height: 300,
-          //           fit: BoxFit.cover,
-          //         ),
           children: <Widget>[
             _image == null
                 ? const Text('No image selected.')
@@ -247,7 +238,11 @@ class _CameraScreenState extends State<CameraScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _openCamera,
-              child: const Text('Open Camera'),
+              child: const Text('Mở Camera'),
+            ),
+            ElevatedButton(
+              onPressed: _openlib,
+              child: const Text('Mở thư viện'),
             ),
             ElevatedButton(
               onPressed: _scanTextFromImage,

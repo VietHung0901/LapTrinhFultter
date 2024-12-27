@@ -1,5 +1,6 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -39,19 +40,24 @@ public class CuocThi {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monThi_id", referencedColumnName = "id")
     @ToString.Exclude
+    @JsonBackReference
     private MonThi monThi;
 
     @OneToMany(mappedBy = "cuocThi", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @JsonBackReference
     private List<ChiTietNoiDung> chiTietNoiDungs = new ArrayList<>();
 
     @OneToMany(mappedBy = "cuocThi", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @JsonBackReference
     private List<ChiTietQuyDinh> chiTietQuyDinhs = new ArrayList<>();
 
     @OneToMany(mappedBy = "cuocThi", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @JsonBackReference
     private List<PhieuDangKy> phieuDangKIES = new ArrayList<>();
+
     private int trangThai;
 
     @Override

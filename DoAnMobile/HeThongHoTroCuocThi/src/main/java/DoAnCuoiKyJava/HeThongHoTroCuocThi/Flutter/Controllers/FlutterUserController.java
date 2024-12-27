@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,7 +21,6 @@ public class FlutterUserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder; // Không dùng BCryptPasswordEncoder trực tiếp
-
 
     @Autowired
     private JWTTokenUtil jwtTokenUtil;

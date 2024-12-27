@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mos/Admin/AdminCuocThi.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   @override
@@ -31,10 +32,15 @@ class AdminHomeScreen extends StatelessWidget {
             // Card with "Manage Contestants"
             _buildCard(
               context,
-              title: 'Manage Contestants',
-              icon: Icons.group,
+              title: 'Quản lý cuộc thi',
+              icon: Icons.emoji_events,
               onPressed: () {
-                // Handle managing contestants
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CuocThiListScreen()), // Điều hướng đến màn hình danh sách cuộc thi
+                );
               },
             ),
 
@@ -56,7 +62,10 @@ class AdminHomeScreen extends StatelessWidget {
   }
 
   // Helper method to create cards
-  Widget _buildCard(BuildContext context, {required String title, required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildCard(BuildContext context,
+      {required String title,
+      required IconData icon,
+      required VoidCallback onPressed}) {
     return Card(
       elevation: 8.0,
       shape: RoundedRectangleBorder(
