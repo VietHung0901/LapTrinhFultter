@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SỬA NỘI DUNG</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/ckeditor/ckeditor.js"></script>
+    <script src="/ckfinder/ckfinder.js"></script>
+    <style>
+        .container-form {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"], input[type="file"], .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .form-group img {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert-danger {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+
+<div style="padding-bottom: 300px;">
+    <div class="container-form" style="padding: 95px;">
+        <h1><i class="fas fa-edit icon"></i>SỬA NỘI DUNG</h1>
+        <form th:action="@{/Admin/NoiDungs/edit}" th:object="${noiDung}" method="post" enctype="multipart/form-data">
+            <!-- Thông báo lỗi -->
+            <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <!-- ID Ẩn -->
+            <input type="hidden" th:field="*{id}">
+
+            <!-- Tên Nội Dung -->
+            <div class="form-group">
+                <label for="tenNoiDung"><i class="fas fa-font icon"></i>Tên Nội Dung</label>
+                <input type="text" class="form-control" id="tenNoiDung" th:field="*{tenNoiDung}"
+                       placeholder="Nhập tên nội dung" required>
+            </div>
+
+            <!-- Mô Tả Nội Dung -->
+            <div class="form-group">
+                <label for="moTaNoiDung"><i class="fas fa-align-left icon"></i>Mô Tả Nội Dung</label>
+                <textarea class="form-control" id="moTaNoiDung" th:field="*{moTaNoiDung}"
+                          placeholder="Nhập mô tả nội dung"></textarea>
+            </div>
+
+            <!-- Ảnh -->
+            <div class="form-group">
+                <label for="imageUrl"><i class="fas fa-image icon"></i>Ảnh</label>
+                <input type="hidden" class="form-control form-control-lg" id="imageUrlText" th:field="*{imageUrl}">
+                <input type="file" class="form-control form-control-lg" id="imageUrl" onchange="previewImage()"
+                       name="imageUrlFile">
+                <img id="preview-image" th:src="@{${noiDung.imageUrl}}" alt="Preview Image" class="img-fluid">
+            </div>
+
+            <div class="form-group">
+                <label for="fileBaiTap"><i class="fas fa-file icon"></i>File bài tập</label>
+                <div>
+                    <a th:href="@{${noiDung.fileBaiTapUrl}}" target="_blank" class="btn btn-link p-0"
+                       th:if="${noiDung.fileBaiTapUrl != null}">
+                        <i class="fas fa-download"></i> Xem file bài tập hiện tại
+                    </a>
+                </div>
+                <input type="file" class="form-control-file" id="fileBaiTap" name="fileBaiTap">
+            </div>
+
+            <!-- Nút Lưu và Trở Về -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save icon"></i>Lưu</button>
+                <a th:href="@{/Admin/NoiDungs}" class="btn btn-secondary"><i class="fas fa-arrow-left icon"></i>Trở
+                    về</a>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+
+<script>
+    CKEDITOR.replace('moTaNoiDung', {
+        filebrowserBrowseUrl: '/ckfinder/ckfinder.html',
+        filebrowserUploadUrl: '/ckfinder/upload',
+        filebrowserUploadMethod: 'form'
+    });
+
+    // Xem trước ảnh
+    function previewImage() {
+        const input = document.getElementById("imageUrl");
+        const preview = document.getElementById("preview-image");
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+
+        if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+</body>
+</html>
+

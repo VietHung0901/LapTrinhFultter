@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa Thông Tin Phiếu Đăng Ký</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Times New Roman', sans-serif;
+            background-color: #f4f7fc;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .card-header {
+            background-color: #4caf50;
+            color: #fff;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        .form-group label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+        }
+        .form-control {
+            border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-save {
+            background-color: #4caf50;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn-save:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div class="container" style="padding: 95px;">
+    <form th:action="@{/Admin/PhieuDangKys/edit}" method="post" th:object="${phieuDangKy}">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" id="cuocThi" th:field="*{cuocThi}" required>
+        <div class="row">
+            <!-- Thông Tin Cuộc Thi -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">THÔNG TIN CUỘC THI</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Tên cuộc thi:</strong> <span th:text="${phieuDangKy.cuocThi.tenCuocThi}"></span></p>
+                        <p><strong>Môn thi:</strong> <span th:text="${phieuDangKy.cuocThi.monThi.getTenMonThi()}"></span></p>
+                        <p><strong>Cấp thi:</strong> <span th:text="${loaiTruongService.getLoaiTruongById(phieuDangKy.cuocThi.loaiTruongId).getTenLoaiTruong()}"></span></p>
+                        <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(phieuDangKy.cuocThi.ngayThi, 'dd/MM/yyyy HH:mm a')}"></span></p>
+                        <p><strong>Địa điểm:</strong> <span th:text="${phieuDangKy.cuocThi.diaDiemThi}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phiếu Đăng Ký -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">PHIẾU ĐĂNG KÝ</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" id="userId" th:field="*{user}">
+                        <div class="form-group">
+                            <label for="userCCCD">CCCD</label>
+                            <input type="text" class="form-control" id="userCCCD" th:field="*{user.cccd}" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoten">Họ và tên</label>
+                            <input type="text" class="form-control" id="hoten" th:field="*{user.hoten}" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="sdt">Số điện thoại</label>
+                            <input type="text" class="form-control" id="sdt" th:field="*{sdt}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" th:field="*{email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="truong">Tên trường</label>
+                            <select class="form-control" id="truong" th:field="*{truongId}">
+                                <option value="">-- Chọn trường --</option>
+                                <option th:each="truong : ${listTruong}" th:value="${truong.id}" th:text="${truong.tenTruong}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ngayDangKy">Thời gian đăng ký</label>
+                            <input type="text" class="form-control" id="ngayDangKy" th:field="*{ngayDangKy}" required readonly>
+                        </div>
+                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Lưu Thay Đổi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>

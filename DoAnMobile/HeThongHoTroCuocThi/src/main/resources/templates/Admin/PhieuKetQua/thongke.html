@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <title>THỐNG KÊ ĐIỂM</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<style>
+    body {
+        background-image: linear-gradient(to bottom, #2196F3, #4CAF50);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        color: #ffffff; /* Màu chữ trắng */
+    }
+
+    canvas {
+        width: 400px;
+        height: 600px;
+    }
+
+    .chart-container {
+        text-align: center; /* Canh giữa nội dung */
+    }
+</style>
+
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div style="padding-bottom: 300px;">
+    <div class="chart-container" style="padding: 95px;">
+        <canvas id="scoreChart"></canvas>
+
+        <script th:inline="javascript">
+            /* Lấy dữ liệu điểm từ Model */
+            var scores = /*[[${diems}]]*/ [];
+
+            /* Tính toán số lượng thí sinh trong từng khoảng điểm */
+            var scoreCounts = [];
+            for (var i = 1; i <= 1000; i += 100) {
+                var count = scores.filter(score => score >= i && score < i + 100).length;
+                scoreCounts.push(count);
+            }
+
+            /* Vẽ biểu đồ tròn */
+            var ctx = document.getElementById('scoreChart').getContext('2d');
+            var scoreChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-100', '101-200', '201-300', '301-400', '401-500', '501-600', '601-700', '701-800', '801-900', '901-1000'],
+                    datasets: [{
+                        label: 'Số lượng thí sinh',
+                        data: scoreCounts,
+                        backgroundColor: [
+                            '#8BC34A', '#FF9800', '#673AB7', '#E91E63', '#11d9b8',
+                            '#FFC107', '#3F51B5', '#9C27B0', '#FF5722', '#2196F3'
+                        ],
+                        borderColor: [
+                            '#689F38', '#F57C00', '#512DA8', '#C2185B', '#388E3C',
+                            '#FFA000', '#303F9F', '#7B1FA2', '#E64A19', '#1976D2'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Thống kê điểm thi',
+                            color: '#000000',
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        },
+                        datalabels: {
+                            color: '#000',
+                            anchor: 'center',
+                            align: 'center',
+                            offset: 0,
+                            font: {
+                                weight: 'bold',
+                                size: 20
+                            },
+                            formatter: (value, context) => {
+                                return value === 0 ? '' : value.toString();
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>

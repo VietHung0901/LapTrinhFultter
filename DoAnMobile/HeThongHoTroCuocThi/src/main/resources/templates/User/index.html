@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initialscale=1.0">
+    <title>HỆ THỐNG HỖ TRỢ CUỘC THI</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700,900" rel="stylesheet">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/fonts/icomoon/style.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/jquery-ui.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/jquery.fancybox.min.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/fonts/flaticon/font/flaticon.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/style1.css}">
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+    <!--------------------------- Hieu Ung ----------------------------------------------->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <!------------------------------------------------------------------------------------>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+    <style>
+        .advertisement-qc {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+
+        .container-qc {
+            position: relative;
+            width: 100vw; /* Đặt chiều rộng bằng 100% chiều rộng màn hình */
+            height: 150vh; /* Đặt chiều cao bằng 100% chiều cao màn hình */
+            overflow: hidden; /* Ẩn phần vượt ngoài khung */
+        }
+
+        .active {
+            opacity: 1; /* Hiển thị ảnh đang active */
+            transform: scale(1.05); /* Tăng kích thước ảnh chút ít để làm nổi bật */
+        }
+
+        .page-selector-qc button {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            margin: 0 5px;
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .page-selector-qc {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .page-selector-qc button.active {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .site-section {
+            padding: 60px 0;
+        }
+
+        /*------------------------------ CSS backround ----------------------------------*/
+        .feature-1 {
+            background: rgba(255, 255, 255, 0.8); /* Màu nền nhạt cho phần tử con */
+            border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
+
+        }
+
+        .feature-1:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        .row {
+            margin-bottom: 30px;
+        }
+
+        .feature-1-content h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .bg-mos {
+            background: url('/imagesLayoutUser/s2-decor2.png') no-repeat center center;
+            background-size: cover !important;
+            padding: 50px 0;
+            position: relative;
+        }
+
+        .bg-mos::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .bg-mos .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-1-content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /*--------------------------------------------------------------------------------------*/
+
+        @media (max-width: 768px) {
+            .container-qc {
+                padding: 0 15px;
+            }
+
+            .advertisement-qc {
+                width: 100%;
+                height: auto;
+            }
+
+            .feature-1 {
+                max-width: 100%; /* Cho phép các box kéo dài toàn chiều ngang */
+                margin: 10px auto;
+            }
+
+            .row {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+
+        .section-title-underline {
+            margin-top: 30px; /* Dịch chuyển tiêu đề xuống */
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-banner {
+            position: relative;
+            background-image: url('/imagesLayoutUser/search-bg.png');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Phần tìm kiếm */
+        .search-form {
+            position: absolute;
+            bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+            width: 80%;
+        }
+
+        .search-form h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .search-form label {
+            color: white;
+        }
+
+        .search-form .form-control {
+            border-radius: 5px;
+        }
+
+        .search-form .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-form .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .footer-spacing {
+            margin-top: 50px;
+        }
+
+    </style>
+
+</head>
+<body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+<th:block th:replace="~{layout::header}"></th:block>
+
+<div class="site-wrap wrapper" style="padding-bottom: 80px;">
+    <div class="site-section">
+        <section class="section1">
+            <div class="container-qc">
+                <img class="advertisement-qc" src="../images/anhnen1.jpg" alt="Advertisement 1">
+                <img class="advertisement-qc" src="../images/anhnen2.png" alt="Advertisement 2">
+                <img class="advertisement-qc" src="../images/IC3-Spark.png" alt="Advertisement 3">
+                <img class="advertisement-qc" src="../images/anhnen4.png" alt="Advertisement 4">
+                <img class="advertisement-qc" src="../images/anhnen5.jpg" alt="Advertisement 5">
+                <img class="advertisement-qc" src="../images/anhnen6.png" alt="Advertisement 6">
+                <div class="page-selector-qc">
+                    <button onclick="showAdvertisement(0)" class="active"></button>
+                    <button onclick="showAdvertisement(1)"></button>
+                    <button onclick="showAdvertisement(2)"></button>
+                    <button onclick="showAdvertisement(3)"></button>
+                    <button onclick="showAdvertisement(4)"></button>
+                    <button onclick="showAdvertisement(5)"></button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="search-banner">
+        <div class="search-form">
+            <div data-aos="fade-down">
+                <h2>Tìm kiếm cuộc thi</h2>
+            </div>
+            <form action="/User/CuocThis/search" method="GET" data-aos="slide-up">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="startDate">Từ ngày:</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" placeholder="yyyy-MM-dd"
+                               onchange="setEndDate()">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="endDate">Đến ngày:</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" placeholder="yyyy-MM-dd">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="location">Địa điểm:</label>
+                        <input type="text" class="form-control" id="location" name="location"
+                               placeholder="Nhập địa điểm thi">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="monThi">Môn thi:</label>
+                        <select id="monThi" class="form-control" name="monThi">
+                            <option value="-1">Chọn môn</option>
+                            <option th:each="monThi : ${monThis}" th:value="${monThi.id}"
+                                    th:text="${monThi.tenMonThi}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="capThi">Cấp thi:</label>
+                        <select id="capThi" class="form-control" name="capThi">
+                            <option value="-1">Chọn cấp</option>
+                            <option th:each="loaiTruong : ${loaiTruongs}" th:value="${loaiTruong.id}"
+                                    th:text="${loaiTruong.tenLoaiTruong}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary px-4 py-2">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="site-section bg-mos">
+        <div class="container">
+            <div class="row mb-5 justify-content-center text-center">
+                <div class="col-lg-4 mb-5">
+                    <h2 class="section-title-underline mb-5" data-aos="fade-down">
+                        <span>Tại Sao Phải Thi MOS</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="row" data-aos="fade-right">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-mortarboard text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Chứng chỉ Văn phòng Quốc tế</h2>
+                            <p>MOS giúp bạn sở hữu chứng chỉ được công nhận trên toàn thế giới về kỹ năng tin học văn
+                                phòng.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-school-material text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Hoàn thiện kiến thức văn phòng chuyên sâu</h2>
+                            <p>Giúp bạn làm chủ các công cụ văn phòng và tối ưu hóa kỹ năng làm việc.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-library text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Được ứng dụng rộng rãi trong đời sống</h2>
+                            <p>Chứng chỉ MOS hỗ trợ bạn trong học tập, làm việc và phát triển sự nghiệp.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5" data-aos="fade-left">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-books-1 text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Có giá trị vô thời hạn</h2>
+                            <p>Một khi đạt được, chứng chỉ MOS sẽ luôn có giá trị trong suốt sự nghiệp của bạn.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-diploma text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Tăng cơ hội có được công việc tốt</h2>
+                            <p>MOS là minh chứng cho khả năng làm việc chuyên nghiệp, giúp bạn nổi bật hơn trong mắt nhà
+                                tuyển dụng.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="feature-1 border">
+                        <div class="icon-wrapper bg-primary">
+                            <span class="flaticon-ink text-white"></span>
+                        </div>
+                        <div class="feature-1-content">
+                            <h2>Tăng năng suất và hiệu quả công việc</h2>
+                            <p>Giúp bạn làm việc thông minh hơn và đạt hiệu quả cao hơn trong các nhiệm vụ hàng
+                                ngày.</p>
+                            <p><a href="#" class="btn btn-primary px-4 rounded-0">Tìm hiểu thêm</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-bg style-1" style="background-image: url('/imagesLayoutUser/blog_1.jpg');">
+        <img th:src="@{/imagesLayoutUser/about_1.jpg}" alt="Anh">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2 class="section-title-underline style-2" data-aos="fade-down">
+                        <span>Thành lập MOS và Cuộc Thi</span>
+                    </h2>
+                </div>
+                <div class="col-lg-8" data-aos="flip-left">
+                    <p class="lead">MOS (Microsoft Office Specialist) là một trong những chứng chỉ hàng đầu thế giới về
+                        kỹ năng tin học văn phòng do Microsoft cấp.</p>
+                    <p>
+                        Cuộc thi MOS đã được tổ chức nhằm tìm kiếm và vinh danh các tài năng trẻ xuất sắc trong việc sử
+                        dụng các công cụ tin học văn phòng như Word, Excel, PowerPoint. Đây là sân chơi giúp các thí
+                        sinh nâng cao kỹ năng, mở ra cơ hội học tập và làm việc ở môi trường chuyên nghiệp quốc tế.
+                    </p>
+                    <p>
+                        Cuộc thi không chỉ mang lại kiến thức mà còn giúp xây dựng những kỹ năng cần thiết cho công việc
+                        như tư duy logic, khả năng xử lý dữ liệu và thuyết trình hiệu quả. Hãy tham gia để khẳng định
+                        bản thân và chinh phục những đỉnh cao mới!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row mb-5 justify-content-center text-center">
+            <div class="col-lg-4 mb-5">
+                <h2 class="section-title-underline mb-5 " data-aos="fade-down" style="background-image: url('/imagesLayoutUser/s4-decor3.png');">
+                    <span>Danh sách quy định</span>
+                </h2>
+            </div>
+        </div>
+        <!-- Swiper Slider -->
+        <div class="swiper" data-aos="slide-up">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" th:each="quyDinh : ${quyDinhs}">
+                    <a th:href="@{/User/QuyDinhs/detail/id/{id}(id=${quyDinh.id})}" class="card mb-4  text-dark">
+                        <div class="card-img-top" style="height: 200px; overflow: hidden;">
+                            <img th:src="@{${quyDinh.imageUrl}}" alt="Quy định"
+                                 class="img-fluid h-100 w-100 object-fit-cover">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${quyDinh.tenQuyDinh}"></h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+
+
+    <div class="site-section bg-mos">
+        <div class="container">
+            <div class="row mb-5 justify-content-center text-center">
+                <div class="col-lg-4 mb-5">
+                    <h2 class="section-title-underline mb-5" data-aos="fade-down">
+                        <span>Cảm Nhận Về MOS</span>
+                    </h2>
+                </div>
+            </div>
+            <div class="row" data-aos="fade-left">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="ftco-testimonial-1">
+                        <div class="ftco-testimonial-vcard d-flex align-items-center mb-4">
+                            <img th:src="@{/imagesLayoutUser/person_1.jpg}" alt="Anh" class="img-fluid mr-3">
+                            <div>
+                                <h3>Nguyễn Văn A</h3>
+                                <span>Sinh viên Đại học Bách Khoa</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p>&ldquo;Kỳ thi MOS đã giúp tôi nâng cao kỹ năng sử dụng tin học văn phòng, đặc biệt là
+                                Excel
+                                và Word.
+                                Đây là nền tảng vững chắc cho công việc của tôi trong tương lai!&rdquo;</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="ftco-testimonial-1">
+                        <div class="ftco-testimonial-vcard d-flex align-items-center mb-4">
+                            <img th:src="@{/imagesLayoutUser/person_2.jpg}" alt="Anh" class="img-fluid mr-3">
+                            <div>
+                                <h3>Trần Thị B</h3>
+                                <span>Giáo viên Tin học</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p>&ldquo;MOS không chỉ là chứng chỉ, mà còn là cơ hội để tôi học hỏi và cải thiện kỹ
+                                năng
+                                sử
+                                dụng PowerPoint
+                                một cách chuyên nghiệp. Tôi rất tự hào khi đạt chứng chỉ này!&rdquo;</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="ftco-testimonial-1">
+                        <div class="ftco-testimonial-vcard d-flex align-items-center mb-4">
+                            <img th:src="@{/imagesLayoutUser/person_3.jpg}" alt="Anh" class="img-fluid mr-3">
+                            <div>
+                                <h3>Phạm Văn C</h3>
+                                <span>Nhân viên Văn phòng</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p>&ldquo;Chứng chỉ MOS đã mở ra nhiều cơ hội cho công việc của tôi. Tôi đã cải thiện
+                                khả
+                                năng
+                                xử lý dữ liệu nhanh chóng và hiệu quả hơn!&rdquo;</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="section-bg style-1" style="background-image: url('/imagesLayoutUser/hero_1.jpg');">
+        <div class="container">
+            <div class="row" data-aos="fade-left">
+                <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+                    <span class="icon flaticon-mortarboard"></span>
+                    <h3>Sứ mệnh</h3>
+                    <p>IIG Việt Nam cam kết đưa những tiêu chuẩn và giải pháp giáo dục tiên tiến nhất, nhằm nâng cao
+                        trình độ và kỹ năng của nguồn nhân lực Việt và khu vực ngang tầm Thế giới.</p>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+                    <span class="icon flaticon-library"></span>
+                    <h3>Tầm nhìn</h3>
+                    <p>Đến năm 2025, IIG Việt Nam định hướng trở thành Tổ chức Giáo dục hàng đầu trong nước và khu vực
+                        về khảo thí, giải pháp giáo dục và hệ sinh thái giáo dục số.</p>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-5 mb-lg-0">
+                    <span class="icon flaticon-school-material"></span>
+                    <h3>Giá trị cốt lõi</h3>
+                    <p> - Tiên phong đổi mới </br>
+                        - Chất lượng quốc tế </br>
+                        - Nội bộ đoàn kết </br>
+                        - Hoạt động chuyên nghiệp </br>
+                        - Hợp tác bền vững</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<th:block th:replace="~{layout::footer}"></th:block>
+<script th:src="@{/js/setEndday.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<!--------------------------------------------------------------------------------------------->
+<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+<script th:src="@{/js/jquery-migrate-3.0.1.min.js}"></script>
+<script th:src="@{/js/jquery-ui.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<!--<script th:src="@{/js/owl.carousel.min.js}"></script>-->
+<script th:src="@{/js/jquery.stellar.min.js}"></script>
+<script th:src="@{/js/jquery.countdown.min.js}"></script>
+<script th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/js/jquery.easing.1.3.js}"></script>
+<script th:src="@{/js/aos.js}"></script>
+<script th:src="@{/js/jquery.fancybox.min.js}"></script>
+<script th:src="@{/js/jquery.sticky.js}"></script>
+<script th:src="@{/js/jquery.mb.YTPlayer.min.js}"></script>
+<!-- Owl Carousel JS -->
+
+
+<script>
+    let currentIndex = 0;
+    const ads = document.querySelectorAll('.advertisement-qc');
+    const buttons = document.querySelectorAll('.page-selector-qc button');
+
+    function showAdvertisement(index) {
+        ads.forEach((ad, i) => {
+            ad.classList.remove('active');
+            buttons[i].classList.remove('active');
+        });
+        ads[index].classList.add('active');
+        buttons[index].classList.add('active');
+        currentIndex = index;
+    }
+
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % ads.length;
+        showAdvertisement(currentIndex);
+    }, 5000);
+
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            showAdvertisement(index);
+        });
+    });
+
+    showAdvertisement(currentIndex);
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#quyDinhCarousel').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Swiper('.swiper', {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            loop: true,
+            breakpoints: {
+                640: {slidesPerView: 2, spaceBetween: 20},
+                768: {slidesPerView: 3, spaceBetween: 30},
+            },
+        });
+    });
+</script>
+<script>
+    AOS.init({
+        duration: 1200,
+    });
+</script>
+
+
+<!--------------------------------------------------------------------------------------------->
+
+</body>
+</html>

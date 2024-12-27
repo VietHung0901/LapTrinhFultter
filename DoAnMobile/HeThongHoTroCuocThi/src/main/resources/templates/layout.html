@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initialscale=1.0">
+    <title>MOS - Your Gateway to Academic Excellence</title>
+    <link th:fragment="link-css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/dropMenu.css}">
+
+    <!----------------------------------------------------------------------------------->
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700,900" rel="stylesheet">
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/fonts/icomoon/style.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/jquery-ui.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/jquery.fancybox.min.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/fonts/flaticon/font/flaticon.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/aos.css}">-->
+    <!--    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/jquery.mb.YTPlayer.min.css}" media="all">-->
+    <link th:fragment="custom-css" rel="stylesheet" th:href="@{/css/style1.css}">
+
+
+    <style>
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffdd57 !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: #ffdd57;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-outline-light:hover {
+            background-color: #fff;
+            color: #6a11cb;
+            border-color: #fff;
+        }
+
+        .header-title a {
+            transition: all 0.3s ease;
+        }
+
+        .header-title a:hover {
+            color: #ffdd57;
+        }
+
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column h-100" data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+
+<div th:fragment="header" sec:authorize="!isAuthenticated() or hasAuthority('USER')"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; padding: 10px 0; position: fixed; width: 100%; z-index: 1000; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <div class="header-title ms-3" style="font-size: 1.5rem; font-weight: 700;">
+                <a href="/" class="logo d-flex align-items-center" style="text-decoration: none; color: #fff;">
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">M</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">O</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">S</span>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul class="nav d-flex align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/"
+                           style="text-decoration: none; color: #fff;">
+                            Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/User/CuocThis"
+                           style="text-decoration: none; color: #fff;">
+                            Cuộc thi
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/User/PhieuDangKys/search"
+                           style="text-decoration: none; color: #fff;">
+                            Phiếu đăng ký
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/User/PhieuKetQuas/search"
+                           style="text-decoration: none; color: #fff;">Tra kết quả</a>
+                    </li>
+
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/User/edit" style="text-decoration: none; color: #fff;">Thông tin</a>
+                    </li>
+                </ul>
+            </nav>
+            <ul class="navbar-nav ml-auto">
+                <!--                <li sec:authorize="isAuthenticated()">-->
+                <!--                    <a class="nav-link" href="#">-->
+                <!--                        <i class="bi bi-person-circle"></i>-->
+                <!--                        <span th:text="${#authentication.getName()}"></span>-->
+                <!--                    </a>-->
+                <!--                </li>-->
+                <li sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-person-circle"></i>
+                        <form th:action="@{/logout}" method="post">
+                            <button class="btn btn-outline-light btn-sm px-4" type="submit"
+                                    style="font-size: 0.9rem; border-radius: 20px;">
+                                Logout
+                            </button>
+                        </form>
+                    </a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">
+                        <i class="bi bi-person-circle"></i>
+                        <button class="btn btn-outline-light btn-sm px-4" type="submit"
+                                style="font-size: 0.9rem; border-radius: 20px;">
+                            Login
+                        </button>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!----------------------------------------------------------------------------------------------------------------------->
+
+<div th:fragment="headerAdmin" sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; padding: 10px 0; position: fixed; width: 100%; z-index: 1000; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <div class="header-title ms-3" style="font-size: 1.5rem; font-weight: 700;">
+                <a href="/Admin" class="logo d-flex align-items-center" style="text-decoration: none; color: #fff;">
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">M</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">O</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">S</span>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul class="nav d-flex align-items-center" style="margin: 0; padding: 0; list-style: none;">
+                    <!-- Các mục menu chính -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/Admin" style="text-decoration: none; color: #fff;">Trang chủ</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/Admin/LoaiTruongs" style="text-decoration: none; color: #fff;">Loại
+                            trường</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/Admin/Truongs" style="text-decoration: none; color: #fff;">Trường</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false" style="text-decoration: none; color: #fff;">
+                            Xem thêm
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                            style="min-width: 200px; background: #6ea8fe; border: none; box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);">
+                            <li><a class="dropdown-item" href="/Admin/MonThis" style="color: black; padding: 10px;">Môn
+                                thi</a></li>
+                            <li><a class="dropdown-item" href="/Admin/QuyDinhs" style="color: black; padding: 10px;">Quy
+                                định</a></li>
+                            <li><a class="dropdown-item" href="/Admin/NoiDungs" style="color: black; padding: 10px;">Nội
+                                dung</a></li>
+                            <li><a class="dropdown-item" href="/Admin/CuocThis" style="color: black; padding: 10px;">Cuộc
+                                thi</a></li>
+                        </ul>
+                    </li>
+
+
+                    <li class="nav-item dropdown" sec:authorize="hasAnyAuthority('MANAGER')">
+                        <a class="nav-link" href="/Manager/PhieuSuaDiems" style="text-decoration: none; color: #fff;">Phiếu
+                            sửa điểm</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/list/ChuaDuyet" style="text-decoration: none; color: #fff;">Quản lý
+                            tài khoản</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/User/edit" style="text-decoration: none; color: #fff;">Thông tin cá
+                            nhân</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- User Actions -->
+            <div class="user-actions d-flex align-items-center me-3">
+                <a sec:authorize="isAuthenticated()" style="text-decoration: none;">
+                    <form th:action="@{/logout}" method="post" class="mb-0">
+                        <button class="btn btn-outline-light btn-sm px-4" type="submit"
+                                style="font-size: 0.9rem; border-radius: 20px;">Logout
+                        </button>
+                    </form>
+                </a>
+                <a sec:authorize="!isAuthenticated()" href="/login">
+                    <button class=" btn btn-outline-light btn-sm px-4"
+                            style="font-size: 0.9rem; border-radius: 20px;">
+                        Đăng Nhập
+                    </button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div th:fragment="headerAdminTruong" sec:authorize="hasAnyAuthority('ADMIN_SCHOOL')"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; padding: 10px 0; position: fixed; width: 100%; z-index: 1000; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <div class="header-title ms-3" style="font-size: 1.5rem; font-weight: 700;">
+                <a href="/ADMIN_SCHOOL" class="logo d-flex align-items-center"
+                   style="text-decoration: none; color: #fff;">
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">M</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">O</span>
+                    <span style="font-size: 2rem; font-weight: bold; color: #ffdd57;">S</span>
+                </a>
+            </div>
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul class="nav d-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/ADMIN_SCHOOL"
+                           style="text-decoration: none; color: #fff; font-size: 1rem; font-weight: 500;">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/ADMIN_SCHOOL/import-students"
+                           style="text-decoration: none; color: #fff; font-size: 1rem; font-weight: 500;">Đăng kí thí
+                            sinh</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/ADMIN_SCHOOL/list"
+                           style="text-decoration: none; color: #fff; font-size: 1rem; font-weight: 500;">Xuất danh
+                            sách</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- User Actions -->
+            <div class="user-actions d-flex align-items-center me-3">
+                <a sec:authorize="isAuthenticated()" style="text-decoration: none;">
+                    <form th:action="@{/logout}" method="post" class="mb-0">
+                        <button class="btn btn-outline-light btn-sm px-4" type="submit"
+                                style="font-size: 0.9rem; border-radius: 20px;">Logout
+                        </button>
+                    </form>
+                </a>
+                <a sec:authorize="!isAuthenticated()" href="/login" class="ms-3 text-white"
+                   style="text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                    Đăng nhập
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:fragment="footer"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; text-align: center; padding: 20px; position: relative; width: 100%; font-family: Arial, sans-serif;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <!-- Cột bên trái -->
+        <div style="flex: 1; text-align: left; margin-right: 20px;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Địa chỉ:</strong></p>
+                <p style="color: #fff;">Saigon Campus: 475A Điện Biên Phủ, Phường 25, Quận Bình Thạnh, TP.HCM</p>
+                <p style="color: #fff;">Ung Van Khiem Campus: 31/36 Ung Văn Khiêm, Phường 25, Quận Bình Thạnh,
+                    TP.HCM</p>
+                <p style="color: #fff;">Thu Duc Campus: Khu Công nghệ cao TP.HCM (SHTP), Xa lộ Hà Nội, Phường Hiệp Phú,
+                    TP. Thủ Đức, TP.HCM</p>
+                <p style="color: #fff;">Hitech Park Campus: Khu Công nghệ cao TP.HCM (SHTP), Phường Long Thạnh Mỹ, TP.
+                    Thủ Đức, TP.HCM.</p>
+            </div>
+        </div>
+
+        <!-- Dấu gạch ngang ngăn cách -->
+        <div style="border-left: 2px solid #fff; height: 100%; margin: 0 20px;"></div>
+
+        <!-- Cột bên phải -->
+        <div style="flex: 1; text-align: left;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Liên hệ:</strong></p>
+                <p style="color: #fff;">Hotline: 1900636929 </p>
+                <p style="color: #fff;">Email: <a href="mailto:moshung090103@gmail.com" style="color: #fff;">moshung090103@gmail.com</a>
+                </p>
+            </div>
+            <img th:src="@{~/imagesLogo/logo-footer.png}" alt="Đơn vị 12"
+                 style="max-width: 20%; height: auto; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Thông tin bản quyền -->
+    <div style="margin-top: 10px;">
+        <p style="color: #fff;">© 2024 IIG Vietnam. Đã đăng ký bản quyền.</p>
+    </div>
+</div>
+
+<div th:fragment="footerAdmin"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; text-align: center; padding: 20px; position: relative; width: 100%; font-family: Arial, sans-serif;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <!-- Cột bên trái -->
+        <div style="flex: 1; text-align: left; margin-right: 20px;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Địa chỉ:</strong></p>
+                <p style="color: #fff;">Saigon Campus: 475A Điện Biên Phủ, Phường 25, Quận Bình Thạnh, TP.HCM</p>
+                <p style="color: #fff;">Ung Van Khiem Campus: 31/36 Ung Văn Khiêm, Phường 25, Quận Bình Thạnh,
+                    TP.HCM</p>
+                <p style="color: #fff;">Thu Duc Campus: Khu Công nghệ cao TP.HCM (SHTP), Xa lộ Hà Nội, Phường Hiệp Phú,
+                    TP. Thủ Đức, TP.HCM</p>
+                <p style="color: #fff;">Hitech Park Campus: Khu Công nghệ cao TP.HCM (SHTP), Phường Long Thạnh Mỹ, TP.
+                    Thủ Đức, TP.HCM.</p>
+            </div>
+        </div>
+
+        <!-- Dấu gạch ngang ngăn cách -->
+        <div style="border-left: 2px solid #fff; height: 100%; margin: 0 20px;"></div>
+
+        <!-- Cột bên phải -->
+        <div style="flex: 1; text-align: left;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Liên hệ:</strong></p>
+                <p style="color: #fff;">Hotline: 1900636929 </p>
+                <p style="color: #fff;">Email: <a href="mailto:moshung090103@gmail.com" style="color: #fff;">moshung090103@gmail.com</a>
+                </p>
+            </div>
+            <img th:src="@{~/imagesLogo/logo-footer.png}" alt="Đơn vị 12"
+                 style="max-width: 20%; height: auto; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Thông tin bản quyền -->
+    <div style="margin-top: 10px;">
+        <p style="color: #fff;">© 2024 IIG Vietnam. Đã đăng ký bản quyền.</p>
+    </div>
+</div>
+
+<div th:fragment="footerAdminTruong"
+     style="background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; text-align: center; padding: 20px; position: relative; width: 100%; font-family: Arial, sans-serif;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <!-- Cột bên trái -->
+        <div style="flex: 1; text-align: left; margin-right: 20px;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Địa chỉ:</strong></p>
+                <p style="color: #fff;">Saigon Campus: 475A Điện Biên Phủ, Phường 25, Quận Bình Thạnh, TP.HCM</p>
+                <p style="color: #fff;">Ung Van Khiem Campus: 31/36 Ung Văn Khiêm, Phường 25, Quận Bình Thạnh,
+                    TP.HCM</p>
+                <p style="color: #fff;">Thu Duc Campus: Khu Công nghệ cao TP.HCM (SHTP), Xa lộ Hà Nội, Phường Hiệp Phú,
+                    TP. Thủ Đức, TP.HCM</p>
+                <p style="color: #fff;">Hitech Park Campus: Khu Công nghệ cao TP.HCM (SHTP), Phường Long Thạnh Mỹ, TP.
+                    Thủ Đức, TP.HCM.</p>
+            </div>
+        </div>
+
+        <!-- Dấu gạch ngang ngăn cách -->
+        <div style="border-left: 2px solid #fff; height: 100%; margin: 0 20px;"></div>
+
+        <!-- Cột bên phải -->
+        <div style="flex: 1; text-align: left;">
+            <div style="margin-bottom: 10px;">
+                <p><strong style="color: #fff;">Liên hệ:</strong></p>
+                <p style="color: #fff;">Hotline: 1900636929 </p>
+                <p style="color: #fff;">Email: <a href="mailto:moshung090103@gmail.com" style="color: #fff;">moshung090103@gmail.com</a>
+                </p>
+            </div>
+            <img th:src="@{~/imagesLogo/logo-footer.png}" alt="Đơn vị 12"
+                 style="max-width: 20%; height: auto; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Thông tin bản quyền -->
+    <div style="margin-top: 10px;">
+        <p style="color: #fff;">© 2024 IIG Vietnam. Đã đăng ký bản quyền.</p>
+    </div>
+</div>
+
+<!--------------------------------------------------------------------------------------------->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>-->
+<!--------------------------------------------------------------------------------------------->
+<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+<!--<script th:src="@{/js/jquery-migrate-3.0.1.min.js}"></script>-->
+<!--<script th:src="@{/js/jquery-ui.js}"></script>-->
+<!--<script th:src="@{/js/popper.min.js}"></script>-->
+<!--<script th:src="@{/js/bootstrap.min.js}"></script>-->
+<!--<script th:src="@{/js/owl.carousel.min.js}"></script>-->
+<!--<script th:src="@{/js/jquery.stellar.min.js}"></script>-->
+<!--<script th:src="@{/js/jquery.countdown.min.js}"></script>-->
+<!--<script th:src="@{/js/bootstrap-datepicker.min.js}"></script>-->
+<!--<script th:src="@{/js/jquery.easing.1.3.js}"></script>-->
+<!--<script th:src="@{/js/aos.js}"></script>-->
+<!--<script th:src="@{/js/jquery.fancybox.min.js}"></script>-->
+<!--<script th:src="@{/js/jquery.sticky.js}"></script>-->
+<!--<script th:src="@{/js/jquery.mb.YTPlayer.min.js}"></script>-->
+</body>
+</html>

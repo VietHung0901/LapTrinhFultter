@@ -1,0 +1,198 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách phiếu đăng ký</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+
+<div class="container" style="padding-top: 95px; padding-bottom: 300px;">
+    <h2 class="mb-4">
+        <i class="fas fa-file-alt" style="padding-right: 5px;"></i>
+        Phiếu đăng ký
+    </h2>
+
+    <div th:if="${phieuDangKys != null}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>CCCD</th>
+                <th>Họ và tên</th>
+                <th>Tên cuộc thi</th>
+                <th>Môn thi</th>
+                <th>Ngày thi</th>
+                <th>Địa điểm thi</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pdk : ${phieuDangKys}">
+                <td th:text="${pdk.id}"></td>
+                <td th:text="${pdk.user.cccd}"></td>
+                <td th:text="${pdk.user.hoten}"></td>
+                <td th:text="${pdk.cuocThi.tenCuocThi}"></td>
+                <td th:text="${pdk.cuocThi.monThi.tenMonThi}"></td>
+                <td th:text="${#temporals.format(pdk.cuocThi.ngayThi, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${pdk.cuocThi.diaDiemThi}">
+                <td>
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/User/PhieuDangKys/details/{id}(id=${pdk.id})}">Xem thông tin</a>
+            </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"
+         style="margin-top: 20px; margin-bottom: 20px;"></div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách phiếu đăng ký</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+            mix-blend-mode: normal;
+        }
+
+        .table {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+
+        }
+
+        .table th, .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn {
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            gap: 5px;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            color: black;
+        }
+
+        .alert {
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 15px;
+        }
+
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            background-color: #f9f9f9;
+            padding: 2rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+
+<div class="container" style="padding-top: 95px; padding-bottom: 300px;">
+    <h2 class="mb-4">
+        <i class="fas fa-file-alt" style="padding-right: 5px;"></i>
+        Phiếu đăng ký
+    </h2>
+
+    <div th:if="${phieuDangKys != null}">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>CCCD</th>
+                    <th>Họ và tên</th>
+                    <th>Tên cuộc thi</th>
+                    <th>Môn thi</th>
+                    <th>Ngày thi</th>
+                    <th>Địa điểm thi</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pdk : ${phieuDangKys}">
+                    <td th:text="${pdk.id}"></td>
+                    <td th:text="${pdk.user.cccd}"></td>
+                    <td th:text="${pdk.user.hoten}"></td>
+                    <td th:text="${pdk.cuocThi.tenCuocThi}"></td>
+                    <td th:text="${pdk.cuocThi.monThi.tenMonThi}"></td>
+                    <td th:text="${#temporals.format(pdk.cuocThi.ngayThi, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${pdk.cuocThi.diaDiemThi}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-sm"
+                           th:href="@{/User/PhieuDangKys/details/{id}(id=${pdk.id})}">
+                            <i class="fas fa-eye"></i> Xem thông tin
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"
+         style="margin-top: 20px; margin-bottom: 20px;"></div>
+</div>
+
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>
+

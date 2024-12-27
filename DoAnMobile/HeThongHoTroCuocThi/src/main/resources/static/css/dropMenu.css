@@ -1,0 +1,35 @@
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style the submenu */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position below the main link */
+    left: 0;
+    background-color: #F44336;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Style for each submenu link */
+.dropdown-item {
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-item:hover {
+    background-color: dodgerblue;
+}
+
+/* Show submenu on hover */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+

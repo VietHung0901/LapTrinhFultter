@@ -1,0 +1,176 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DANH SÁCH PHIẾU KẾT QUẢ</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+            mix-blend-mode: normal;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+
+<div class="container" style="padding-top: 95px; padding-bottom: 300px;">
+    <h2 class="mb-4">Danh sách phiếu kết quả</h2>
+
+    <div class="form-group">
+        <p>Điền cccd để tra kết quả của bạn.</p>
+        <div class="input-group">
+            <input type="text" class="form-control" id="cccd" required placeholder="Nhập cccd">
+            <div class="input-group-append">
+                <button type="button" class="btn btn-primary" onclick="searchPKQ()">Xác nhận</button>
+            </div>
+        </div>
+        <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"
+             style="margin-top: 20px; margin-bottom: 20px;"></div>
+    </div>
+
+    <table class="table">
+        <tr>
+            <th>Mã phiếu</th>
+            <th>Cuộc thi</th>
+            <th>CCCD</th>
+            <th>Họ và tên</th>
+            <th>Trường</th>
+            <th>Điểm</th>
+            <th>Thời gian</th>
+            <th>Thao tác</th>
+        </tr>
+        <tbody id="pkq-table-body">
+
+        </tbody>
+    </table>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+<script th:src="@{/js/searchPKQ.js}"></script>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DANH SÁCH PHIẾU KẾT QUẢ</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+            mix-blend-mode: normal;
+        }
+
+        .container {
+            padding-top: 95px;
+            padding-bottom: 300px;
+        }
+
+        h2 {
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .alert {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .btn-search {
+            width: 100%;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-group input {
+            font-size: 16px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+
+<div class="container">
+    <h2 class="text-center">Danh sách phiếu kết quả</h2>
+
+    <div class="form-group">
+        <p class="text-center mb-4">Điền CCCD để tra kết quả của bạn.</p>
+        <div class="input-group">
+            <input type="text" class="form-control" id="cccd" required placeholder="Nhập CCCD">
+            <div class="input-group-append">
+                <button type="button" class="btn btn-primary btn-search" onclick="searchPKQ()">Xác nhận</button>
+            </div>
+        </div>
+        <div th:if="${errorMessage != null}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>Cuộc thi</th>
+                <th>CCCD</th>
+                <th>Họ và tên</th>
+                <th>Trường</th>
+                <th>Điểm</th>
+                <th>Thời gian</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody id="pkq-table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây thông qua JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+<script th:src="@{/js/searchPKQ.js}"></script>
+</body>
+</html>
+

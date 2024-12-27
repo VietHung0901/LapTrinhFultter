@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <title>THỐNG KÊ</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        #BieuDo {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            max-height: 500px;
+            margin-bottom: 32px;
+            margin-top: 50px;
+        }
+
+        /* Styling chung */
+        .management-board {
+            background-color: #ffffff;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        /* Header */
+        .management-board h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 40px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Card Container */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Card */
+        .card {
+            width: 300px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Card Content */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .card-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2b2b2b;
+        }
+
+        /* Card Image */
+        .card-image img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: brightness(1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-image img {
+            transform: scale(1.1);
+        }
+
+        .card-image {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card:hover .card-image {
+            background-color: #ececec;
+        }
+
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout:: headerAdmin}"></th:block>
+
+<div class="management-board" style=" padding: 95px; padding-bottom: 300px;">
+    <h1>BẢNG THỐNG KÊ</h1>
+    <div class="card-container">
+        <div class="card" style="cursor: pointer;">
+            <div class="card-content">
+                <div class="card-item">
+                    <p class="card-title" data-card-title="Tổng thí sinh">Tổng thí sinh</p>
+                    <p class="card-text"><span th:text="${totalUsers}"></span></p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/globe.png" class="card-img-top" alt="Total Users">
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="cursor: pointer;">
+            <div class="card-content">
+                <div class="card-item">
+                    <p class="card-title" data-card-title="Tổng cuộc thi">Tổng cuộc thi</p>
+                    <p class="card-text"><span th:text="${totalCompetitions}"></span></p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/cuocthi.png" class="card-img-top" alt="Total Competitions">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <div class="card-item">
+                    <p class="card-title">Tổng lượt đăng ký</p>
+                    <p class="card-text"><span th:text="${totalRegistrations}"></span></p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/ghidanh.png" class="card-img-top" alt="Total Registrations">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="BieuDo">
+
+    </canvas>
+</div>
+<th:block th:replace="~{layout::footer}"></th:block>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userCountsByLoaiTruong = /*[[${userCountsByLoaiTruong}]]*/ [];
+
+    var labels = userCountsByLoaiTruong.map(function (item) {
+        return item[0]; // Assuming the first element in each row is LoaiTruong name
+    });
+
+    var data = userCountsByLoaiTruong.map(function (item) {
+        return item[1]; // Assuming the second element in each row is count of users
+    });
+
+    var ctx = document.getElementById('BieuDo').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                borderColor: [
+                    '#689F38', '#F57C00', '#512DA8', '#C2185B', '#388E3C',
+                    '#FFA000', '#303F9F', '#7B1FA2', '#E64A19', '#1976D2'
+                ],
+                backgroundColor: [
+                    '#8BC34A', '#FF9800', '#673AB7', '#E91E63', '#4CAF50',
+                    '#FFC107', '#3F51B5', '#9C27B0', '#FF5722', '#2196F3'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Biểu đồ số lượng người dùng theo loại trường',
+                    font: {
+                        size: 24,
+                        weight: 'bold'
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top', // Display legend on top
+                    align: 'center',
+                    labels: {
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#000',
+                    anchor: 'center',
+                    align: 'center',
+                    offset: 0,
+                    font: {
+                        weight: 'bold',
+                        size: 20
+                    },
+                    formatter: (value, context) => {
+                        return value === 0 ? '' : value.toString();
+                    }
+                }
+            }
+        }
+    });
+
+    /*duong dan ra list cuoc thi da tao*/
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy thẻ card "Tổng cuộc thi" và thêm sự kiện click
+        var totalCompetitionsCard = document.querySelector('.card-title[data-card-title="Tổng cuộc thi"]');
+        if (totalCompetitionsCard) {
+            totalCompetitionsCard.addEventListener('click', function () {
+                window.location.href = '/Admin/CuocThis';
+            });
+        }
+    });
+
+    /*duong dan ra list thi sinh*/
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy thẻ card "Tổng cuộc thi" và thêm sự kiện click
+        var totalCompetitionsCard = document.querySelector('.card-title[data-card-title="Tổng thí sinh"]');
+        if (totalCompetitionsCard) {
+            totalCompetitionsCard.addEventListener('click', function () {
+                window.location.href = '/list/ThanhCong';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

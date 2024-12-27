@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>THÊM TRƯỜNG</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Container chính */
+        .form-container {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 700px;
+            margin: auto;
+        }
+
+        /* Header */
+        .form-container h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .form-container h1 i {
+            color: #333;
+        }
+
+        /* Form input styles */
+        .form-group label {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 5px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+            background-color: #ffffff;
+        }
+
+        /* Buttons */
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-container h1 {
+                font-size: 2rem;
+            }
+
+            .btn-submit, .btn-back {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+
+<div style="padding-bottom: 300px;">
+    <div class="form-container" style="padding: 95px;">
+        <h1>
+            <i class="fas fa-school"></i> Thêm Trường
+        </h1>
+        <form th:action="@{/Admin/Truongs/add}" th:object="${truong}" method="post">
+            <div class="form-group">
+                <label for="tenTruong">Tên Trường</label>
+                <input type="text" class="form-control" id="tenTruong" th:field="*{tenTruong}" required>
+            </div>
+            <div class="form-group mb-4">
+                <label for="truong">Loại Trường</label>
+                <select class="form-control" id="truong" th:field="*{loaiTruong}">
+                    <option value="">-- Chọn Loại Trường --</option>
+                    <option th:each="loaiTruong : ${listLoaiTruong}" th:value="${loaiTruong.id}"
+                            th:text="${loaiTruong.tenLoaiTruong}"></option>
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-plus-circle"></i> Tạo
+                </button>
+                <a th:href="@{/Admin/Truongs}" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Trở về
+                </a>
+            </div>
+            <span id="feedback" class="mt-2 d-block"></span>
+
+        </form>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tenTruongInput = document.getElementById("tenTruong");
+        const checkFeedback = document.getElementById("checkFeedback");
+        const submitBtn = document.getElementById("submitBtn");
+
+        tenTruongInput.addEventListener("input", function () {
+            const tenTruong = tenTruongInput.value.trim();
+
+            // Nếu tên trường rỗng, không thực hiện kiểm tra
+            if (!tenTruong) {
+                checkFeedback.classList.add("d-none");
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // Gửi yêu cầu kiểm tra trường học
+            fetch(`/api/check-school`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ tenTruong })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        checkFeedback.classList.remove("d-none");
+                        checkFeedback.classList.replace("text-danger", "text-success");
+                        checkFeedback.textContent = "Trường học này đã tồn tại.";
+                        submitBtn.disabled = false;
+                    } else {
+                        checkFeedback.classList.remove("d-none");
+                        checkFeedback.classList.replace("text-success", "text-danger");
+                        checkFeedback.textContent = "Trường học không tồn tại hoặc chưa được xác thực.";
+                        submitBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking school:", error);
+                    checkFeedback.classList.remove("d-none");
+                    checkFeedback.classList.replace("text-success", "text-danger");
+                    checkFeedback.textContent = "Không thể kiểm tra trường học. Vui lòng thử lại sau.";
+                    submitBtn.disabled = true;
+                });
+        });
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cập Nhật Thí Sinh</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .card {
+            margin: 10px;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .card-header {
+                font-size: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .btn-block {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdminTruong}"></th:block>
+
+<!--<div class="container">-->
+<!--    <div class="row justify-content-center align-items-center vh-100">-->
+<!--        &lt;!&ndash; Thông tin thí sinh trong hệ thống &ndash;&gt;-->
+<!--        <div class="col-md-6 mb-4">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-header bg-secondary text-white text-center">-->
+<!--                    <h5>Thí sinh trong hệ thống</h5>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                    &lt;!&ndash; Thông tin &ndash;&gt;-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="text" id="cccd" name="cccd" class="form-control" th:value="${user1.cccd}" readonly placeholder="CCCD" />-->
+<!--                    </div>-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="email" id="email" name="email" class="form-control" th:value="${user1.email}" readonly placeholder="Email" />-->
+<!--                    </div>-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="text" id="phone" name="phone" class="form-control" th:value="${user1.phone}" readonly placeholder="Số điện thoại" />-->
+<!--                    </div>-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="text" id="hoten" name="hoten" class="form-control" th:value="${user1.hoten}" readonly placeholder="Họ và tên" />-->
+<!--                    </div>-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-building"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="text" id="truong" name="truong.id" class="form-control" th:value="${user1.truong.tenTruong}" readonly placeholder="Trường" />-->
+<!--                    </div>-->
+<!--                    <div class="form-group input-group">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>-->
+<!--                        </div>-->
+<!--                        <input type="text" id="ngaySinh" name="ngaySinh" class="form-control" th:value="${user1.ngaySinh}" readonly placeholder="Ngày sinh" />-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Thông tin thí sinh hiện tại &ndash;&gt;-->
+<!--        <div class="col-md-6 mb-4">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-header bg-primary text-white text-center">-->
+<!--                    <h5>Thí sinh hiện tại</h5>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                    <form th:action="@{/ADMIN_SCHOOL/import-students/update/{cccd}(cccd=${user.cccd})}" method="post">-->
+<!--                        <div th:if="${message}" class="alert alert-success">-->
+<!--                            <span th:text="${message}"></span>-->
+<!--                        </div>-->
+<!--                        <div th:if="${error}" class="alert alert-danger">-->
+<!--                            <span th:text="${error}"></span>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Thông tin &ndash;&gt;-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="text" id="cccd" name="cccd" class="form-control" th:value="${user.cccd}" readonly placeholder="CCCD" />-->
+<!--                        </div>-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" readonly placeholder="Email" />-->
+<!--                        </div>-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="text" id="phone" name="phone" class="form-control" th:value="${user.phone}" readonly placeholder="Số điện thoại" />-->
+<!--                        </div>-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="text" id="hoten" name="hoten" class="form-control" th:value="${user.hoten}" readonly placeholder="Họ và tên" />-->
+<!--                        </div>-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-building"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="text" id="truong" name="truong.id" class="form-control" th:value="${user.truong.tenTruong}" readonly placeholder="Trường" />-->
+<!--                        </div>-->
+<!--                        <div class="form-group input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>-->
+<!--                            </div>-->
+<!--                            <input type="date" id="ngaySinh" name="ngaySinh" class="form-control" th:value="${user.ngaySinh}" readonly placeholder="Ngày sinh" />-->
+<!--                        </div>-->
+
+<!--                        <button type="submit" class="btn btn-primary btn-block">Cập Nhật</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="container-fluid" style="padding: 90px">
+    <div class="row justify-content-center align-items-center">
+        <!-- Thông tin thí sinh trong hệ thống -->
+        <div class="col-sm-12 col-md-6 col-lg-5 mb-4">
+            <div class="card shadow-sm shadow-lg border-0">
+                <div class="card-header bg-secondary text-white text-center">
+                    <h5>Thí sinh trong hệ thống</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Các thông tin -->
+                    <div class="form-group">
+                        <label for="cccd"><i class="fa-solid fa-id-card"></i> CCCD</label>
+                        <input type="text" id="cccd" name="cccd" class="form-control" th:value="${user1.cccd}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" class="form-control" th:value="${user1.email}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone"><i class="fa-solid fa-phone"></i> Số điện thoại</label>
+                        <input type="text" id="phone" name="phone" class="form-control" th:value="${user1.phone}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="hoten"><i class="fa-solid fa-user"></i> Họ và tên</label>
+                        <input type="text" id="hoten" name="hoten" class="form-control" th:value="${user1.hoten}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="truong"><i class="fa-solid fa-building"></i> Trường</label>
+                        <input type="text" id="truong" name="truong.id" class="form-control" th:value="${user1.truong.tenTruong}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="ngaySinh"><i class="fa-solid fa-calendar"></i> Ngày sinh</label>
+                        <input type="text" id="ngaySinh" name="ngaySinh" class="form-control" th:value="${user1.ngaySinh}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="gender"><i class="fa-solid fa-calendar"></i> Giới tính</label>
+                        <input type="text" id="gender" name="gender" class="form-control" th:value="${user.gender == 0 ? 'Nam' : user.gender == 1 ? 'Nữ' : 'Chưa xác định'}" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin thí sinh hiện tại -->
+        <div class="col-sm-12 col-md-6 col-lg-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5>Thí sinh hiện tại</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/ADMIN_SCHOOL/import-students/update/{cccd}/{email}/{sdt}/{truongID}(cccd=${user.cccd}, email=${user.email}, sdt=${user.phone}, truongID=${user.truong.id})}" method="post">
+                        <!-- Cảnh báo -->
+                        <div th:if="${message}" class="alert alert-success">
+                            <span th:text="${message}"></span>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger">
+                            <span th:text="${error}"></span>
+                        </div>
+
+                        <!-- Các thông tin -->
+                        <div class="form-group">
+                            <label for="cccd"><i class="fa-solid fa-id-card"></i> CCCD</label>
+                            <input type="text" id="cccd" name="cccd" class="form-control" th:value="${user.cccd}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
+                            <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone"><i class="fa-solid fa-phone"></i> Số điện thoại</label>
+                            <input type="text" id="phone" name="phone" class="form-control" th:value="${user.phone}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="hoten"><i class="fa-solid fa-user"></i> Họ và tên</label>
+                            <input type="text" id="hoten" name="hoten" class="form-control" th:value="${user.hoten}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="truong"><i class="fa-solid fa-building"></i> Trường</label>
+                            <input type="text" id="truong" name="truong.id" class="form-control" th:value="${user.truong.tenTruong}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="ngaySinh"><i class="fa-solid fa-calendar"></i> Ngày sinh</label>
+                            <input type="date" id="ngaySinh" name="ngaySinh" class="form-control" th:value="${user.ngaySinh}" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="gender"><i class="fa-solid fa-calendar"></i> Giới tính</label>
+                            <input type="text" id="gender" name="gender" class="form-control" th:value="${user.gender == 0 ? 'Nam' : user.gender == 1 ? 'Nữ' : ''}" readonly />
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Cập Nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout::footerAdminTruong}"></th:block>
+</body>
+</html>

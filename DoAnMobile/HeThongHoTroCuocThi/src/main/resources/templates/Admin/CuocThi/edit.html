@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SỬA CUỘC THI</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .step-container {
+            display: none;
+        }
+        .step-container.active {
+            display: block;
+        }
+        .custom-btn {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .custom-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .checkbox-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+        .checkbox-item label {
+            font-size: 16px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item label i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+        .checkbox-list {
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #343a40;
+        }
+        .icon {
+            margin-right: 5px;
+        }
+
+        .btn-yellow {
+            background-color: #ffc107;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 50px;
+            border: none;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yellow:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+
+        .btn-blue {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 50px;
+            border: none;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-blue:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-green {
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 50px;
+            border: none;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-green:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-card:hover {
+            background-color: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .checkbox-card input {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .checkbox-card label {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .stepper-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .stepper-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+
+        .stepper-item::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: -50%;
+            width: 100%;
+            height: 3px;
+            background-color: #dcdcdc;
+            z-index: 0;
+        }
+
+        .stepper-item:first-child::before {
+            display: none;
+        }
+
+        .stepper-item.active::before {
+            background-color: #28a745;
+        }
+
+        .step-counter {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #dcdcdc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #6c757d;
+            z-index: 1;
+        }
+
+        .stepper-item.active .step-counter {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .step-name {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .stepper-item.active .step-name {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+
+<div class="container" style="padding: 95px; padding-bottom: 300px;">
+    <h1 class="my-4 text-center"><i class="fas fa-pen-to-square"></i> SỬA CUỘC THI</h1>
+
+    <!-- Progress Bar -->
+    <div class="stepper-wrapper">
+        <div class="stepper-item active">
+            <div class="step-counter">1</div>
+            <div class="step-name">Thông tin cơ bản</div>
+        </div>
+        <div class="stepper-item">
+            <div class="step-counter">2</div>
+            <div class="step-name">Quy định</div>
+        </div>
+        <div class="stepper-item">
+            <div class="step-counter">3</div>
+            <div class="step-name">Nội dung</div>
+        </div>
+    </div>
+
+    <form th:action="@{/Admin/CuocThis/edit}" th:object="${cuocThi}" method="post">
+        <!-- Step 1 -->
+        <div id="step-1" class="step-container active">
+            <input type="hidden" th:field="*{id}" required>
+            <div class="form-group">
+                <label for="tenCuocThi"><i class="fas fa-pen icon"></i> Tên cuộc thi</label>
+                <input type="text" class="form-control" id="tenCuocThi" th:field="*{tenCuocThi}" placeholder="Nhập tên cuộc thi" required>
+            </div>
+            <div class="form-group">
+                <label for="ngayThi"><i class="fas fa-calendar-alt icon"></i> Thời gian tổ chức</label>
+                <input type="datetime-local" class="form-control" id="ngayThi" th:field="*{ngayThi}" required>
+            </div>
+            <div class="form-group">
+                <label for="soLuongThiSinh"><i class="fas fa-users icon"></i> Số lượng thí sinh</label>
+                <input type="number" class="form-control" id="soLuongThiSinh" th:field="*{soLuongThiSinh}" required>
+            </div>
+            <div class="form-group">
+                <label for="DiaDiemThi"><i class="fas fa-map-marker-alt icon"></i> Địa điểm tổ chức</label>
+                <input type="text" class="form-control" id="DiaDiemThi" th:field="*{diaDiemThi}" required>
+            </div>
+            <div class="form-group">
+                <label for="monThi"><i class="fas fa-book icon"></i> Môn thi</label>
+                <select class="form-control" id="monThi" th:field="*{monThi}">
+                    <option value="">-- Chọn môn thi --</option>
+                    <option th:each="monThi : ${listMonThi}" th:value="${monThi.id}" th:text="${monThi.tenMonThi}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="LoaiTruongId"><i class="fas fa-school icon"></i> Cấp thi</label>
+                <select class="form-control" id="LoaiTruongId" th:field="*{LoaiTruongId}">
+                    <option value="">-- Chọn cấp thi --</option>
+                    <option th:each="loaiTruong : ${listLoaiTruong}" th:value="${loaiTruong.id}" th:text="${loaiTruong.tenLoaiTruong}"></option>
+                </select>
+            </div>
+            <div class="form-group text-center mt-4">
+                <a th:href="@{/Admin/CuocThis}" class="btn btn-yellow"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                <button type="button" onclick="nextStep(2)" class="btn btn-blue">Tiếp tục <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="step-2" class="step-container">
+            <div class="card">
+                <div class="card-header">Chọn Quy Định</div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div th:each="quyDinh : ${allQuyDinhs}" class="checkbox-card mr-3 mb-3">
+                            <input type="checkbox" id="'quyDinh' + ${quyDinh.id}" name="selectedQuyDinhs" th:value="${quyDinh.id}" th:checked="${chiTietQuyDinhs.contains(quyDinh)}"/>
+                            <label th:for="'quyDinh' + ${quyDinh.id}" th:text="${quyDinh.tenQuyDinh}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-center mt-4">
+                <button type="button" onclick="nextStep(1)" class="btn btn-yellow"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                <button type="button" onclick="nextStep(3)" class="btn btn-blue">Tiếp tục <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="step-3" class="step-container" >
+            <div class="card">
+                <div class="card-header">Chọn Nội Dung</div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div th:each="noiDung : ${allNoiDungs}" class="checkbox-card mr-3 mb-3">
+                            <input type="checkbox" id="'noiDung' + ${noiDung.id}" name="selectedNoiDungs" th:value="${noiDung.id}" th:checked="${chiTietNoiDungs.contains(noiDung)}"/>
+                            <label th:for="'noiDung' + ${noiDung.id}" th:text="${noiDung.tenNoiDung}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-center mt-4">
+                <button type="button" onclick="nextStep(2)" class="btn btn-yellow"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                <button type="submit" class="btn btn-green">Lưu <i class="fas fa-save"></i></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+<script th:src="@{/js/TaoCuocThi.js}"></script>
+<script>
+    function updateStepper(step) {
+        const stepperItems = document.querySelectorAll('.stepper-item');
+        stepperItems.forEach((item, index) => {
+            if (index < step - 1) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+        // Cập nhật bước hiện tại
+        nextStep(step); // Gọi hàm hiển thị form đã có
+    }
+</script>
+</body>
+</html>

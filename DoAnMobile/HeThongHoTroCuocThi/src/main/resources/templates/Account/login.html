@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initialscale=1.0">
+    <title>ĐĂNG NHẬP</title>
+    <th:block th:replace="~{layout :: link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-group {
+            position: relative;
+        }
+
+        .form-control {
+            padding-right: 40px;
+        }
+
+        .eye-icon {
+            position: absolute;
+            top: 66%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        .eye-icon:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body style="background: #f6f7fc;">
+<th:block th:replace="~{layout :: header}"></th:block>
+<div class="container" style="padding-top: 95px; padding-bottom: 80px;">
+    <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-lg-6 col-md-8 col-xl-5">
+            <div class="card shadow" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center">
+                    <!-- chen them logo -->
+                    <img th:src="@{~/imagesLogo/logo-mos-login.jpg}" alt="Logo" style="width: 200px; height: 150px;">
+                    <h4><strong>HỆ THỐNG HỖ TRỢ CUỘC THI</strong></h4>
+                    <div th:if="${successMessage}" class="alert alert-info">
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <hr class="my-4">
+                    <form th:action="@{/login}" method="post">
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Tài khoản hoặc mật khẩu không đúng.
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            Bạn đã được đăng xuất.
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="username"></label>
+                            <input type="text" class="form-control"
+                                   required id="username" name="username" placeholder="Tài khoản">
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="password"></label>
+                            <input type="password" class="form-control"
+                                   required id="password" name="password" placeholder="Mật khẩu">
+                            <span class="position-absolute eye-icon" onclick="togglePasswordVisibility()">
+                              <i id="togglePasswordIcon" class="fa fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <div class="d-grid gap-2 form-action">
+                            <button type="submit" class="btn btn primary btn-lg btn-block">Đăng nhập</button>
+                            <p class="mt-3 mb-0">Bạn chưa có tài khoản?
+                                <a class="text-info text-center" th:href="${'/register'}">Đăng ký?</a>
+                            </p>
+                        </div>
+                    </form>
+                    <div>
+                        <a href="/gmailForgotPassword">Quên mật khẩu</a>
+                    </div>
+                    <div th:if="${waitingMessage}" class="alert alert-info">
+                        <span th:text="${waitingMessage}"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout :: footer}"></th:block>
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("password");
+        const toggleIcon = document.getElementById("togglePasswordIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleIcon.classList.remove("fa-eye-slash");
+            toggleIcon.classList.add("fa-eye");
+        } else {
+            passwordInput.type = "password";
+            toggleIcon.classList.remove("fa-eye");
+            toggleIcon.classList.add("fa-eye-slash");
+        }
+    }
+</script>
+
+</body>
+</html>

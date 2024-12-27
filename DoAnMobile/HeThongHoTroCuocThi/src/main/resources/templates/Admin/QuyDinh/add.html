@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>THÊM QUY ĐỊNH</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/ckeditor/ckeditor.js"></script>
+    <script src="/ckfinder/ckfinder.js"></script>
+    <style>
+        .container-form {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container-form h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .form-control-file {
+            padding: 5px;
+        }
+
+        #preview-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #218838;
+            color: black;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .custom-file-label {
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .form-container {
+            margin-left: 50px;
+            padding: 30px 0;
+        }
+
+        .icon {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div style="padding-bottom: 300px;">
+    <div class="container-form" style="padding: 95px;">
+        <h1> Thêm Quy Định</h1>
+        <form th:action="@{/Admin/QuyDinhs/add}" th:object="${quyDinh}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="tenQuyDinh"><i class="fas fa-font icon"></i>Tên quy định</label>
+                <input type="text" class="form-control" id="tenQuyDinh" th:field="*{tenQuyDinh}" required>
+            </div>
+            <div class="form-group">
+                <label for="moTaQuyDinh"><i class="fas fa-align-left icon"></i>Mô tả nội dung</label>
+                <textarea class="form-control" name="moTaQuyDinh" id="moTaQuyDinh" th:field="*{moTaQuyDinh}"
+                          required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="imageUrl"><i class="fas fa-image icon"></i>Ảnh</label>
+                <input type="file" class="form-control-file" required id="imageUrl" onchange="previewImage()"
+                       th:field="*{imageUrl}">
+                <img id="preview-image" src="#" alt="Preview Image" style="display: none;">
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save icon"></i>Tạo</button>
+                <a th:href="@{/Admin/QuyDinhs}" class="btn btn-secondary"><i class="fas fa-arrow-left icon"></i>Trở
+                    về</a>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+
+<script th:src="@{/js/Register.js}"></script>
+<script>
+    CKEDITOR.replace('moTaQuyDinh', {
+        filebrowserBrowseUrl: '/ckfinder/ckfinder.html',
+        filebrowserUploadUrl: '/ckfinder/upload',
+        filebrowserUploadMethod: 'form'
+    });
+
+    // Preview image function
+    function previewImage() {
+        var file = document.getElementById("imageUrl").files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById("preview-image").src = e.target.result;
+            document.getElementById("preview-image").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+</body>
+</html>

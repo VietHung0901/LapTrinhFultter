@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>NHẬP ĐIỂM</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .btn-custom {
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: black;
+            transform: scale(1.05);
+        }
+
+
+        .btn-danger {
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            color: black;
+            transform: scale(1.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .input-group-append .btn {
+            border-radius: 0 25px 25px 0;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div style="padding-bottom: 300px;">
+    <div class="container" style="padding: 95px;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mt-4">
+                    <div class="card-body form-XacNhan">
+                        <div class="card-header">
+                            <h4 class="mb-0">Xác nhận thông tin</h4>
+                            <p>Xác nhận đúng thông tin thí sinh trước khi nhập điểm.</p>
+                        </div>
+                        <!--Xác nhận thông tin bằng cccd-->
+                        <div class="form-group">
+                            <label for="cccd" class="form-label">CCCD</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="cccd" required placeholder="Nhập cccd">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary" id="confirmInfoButton">
+                                        <i class="fas fa-check btn-icon"></i> Xác nhận
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"
+                                 style="margin-top: 20px; margin-bottom: 20px;"></div>
+                        </div>
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <label for="hoten" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="hoten" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <img id="imageUrl" src="#" alt="User Image" style="max-width: 200px; display: none;">
+                        </div>
+                        <div class="form-group">
+                            <label for="sdt" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="sdt" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="truongName" class="form-label">Tên trường</label>
+                            <div class="input-group">
+                                <input type="hidden" class="form-control" id="truongId" required
+                                       readonly>
+                                <input type="text" class="form-control" id="truongName" required readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="form-label">Giới tính</label>
+                            <span id="gender" class="form-control" required readonly></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mt-4">
+                    <div class="card-body form-NhapDiem" style="display: none">
+                        <div class="card-header">
+                            <h4 class="mb-0">Nhập điểm</h4>
+                        </div>
+                        <form th:action="@{/Admin/PhieuKetQuas/add}" th:object="${phieuKetQua}" method="post"
+                              onsubmit="return validateForm()">
+                            <div class="form-group">
+                                <label for="phieuDangKy">Phiếu đăng ký</label>
+                                <input type="text" class="form-control" id="phieuDangKy" th:field="*{phieuDangKy}"
+                                       required readonly>
+                                <input type="hidden" class="form-control" id="phieuDangKyUserId"
+                                       th:field="*{phieuDangKy.user.id}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phut">Phút</label>
+                                <input type="number" class="form-control" id="phut" th:field="*{phut}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="giay">Giây</label>
+                                <input type="number" class="form-control" id="giay" th:field="*{giay}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phut">Điểm</label>
+                                <input type="number" class="form-control" id="diem" th:field="*{diem}" required>
+                            </div>
+                            <div id="error-message" style="color: red; display: none; padding: 5px;">Tổng thời gian
+                                không được vượt quá 90 phút.
+                            </div>
+                            <button type="submit" class="btn btn-danger btn-custom">
+                                <i class="fas fa-save btn-icon"></i> Nhập điểm
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+<script>
+    function validateForm() {
+        const phut = parseInt(document.getElementById("phut").value) || 0;
+        const giay = parseInt(document.getElementById("giay").value) || 0;
+        const diem = parseFloat(document.getElementById("diem").value) || 0;
+
+        // Kiểm tra tổng thời gian không quá 90 phút (5400 giây)
+        const totalSeconds = phut * 60 + giay;
+        const maxSeconds = 90 * 60;
+
+        if (totalSeconds > maxSeconds) {
+            document.getElementById("error-message").style.display = "block";
+            return false; // Ngăn form gửi đi
+        } else {
+            document.getElementById("error-message").style.display = "none";
+        }
+
+        // Kiểm tra điểm phải trong khoảng từ 0 đến 1000
+        if (diem < 0 || diem > 1000) {
+            alert("Điểm phải nằm trong khoảng từ 0 đến 1000.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+<script th:src="@{/js/NhapSuaDiem.js}"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>THÔNG TIN PHIẾU ĐĂNG KÝ</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+            mix-blend-mode: normal;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<div class="container" style="padding-top: 95px; padding-bottom: 300px;">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">THÔNG TIN CUỘC THI</h4>
+                </div>
+                <div class="card-body">
+                    <p>Tên cuộc thi: <span th:text="${phieuDangKy.cuocThi.tenCuocThi}"></span></p>
+                    <p>Môn thi: <span th:text="${phieuDangKy.cuocThi.monThi.getTenMonThi()}"></span></p>
+                    <p>Cấp thi: <span
+                            th:text="${loaiTruongService.getLoaiTruongById(phieuDangKy.cuocThi.loaiTruongId).getTenLoaiTruong()}"></span>
+                    </p>
+                    <p>Thời gian: <span th:text="${phieuDangKy.cuocThi.ngayThi}"></span></p>
+                    <p>Địa điểm: <span th:text="${phieuDangKy.cuocThi.diaDiemThi}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">PHIẾU ĐĂNG KÝ</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="userCCCD" class="form-label">CCCD</label>
+                        <p><span class="form-control" id="userCCCD" th:text="${phieuDangKy.user.cccd}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="hoten" class="form-label">Họ và tên</label>
+                        <p><span class="form-control" id="hoten" th:text="${phieuDangKy.user.hoten}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sdt" class="form-label">Số điện thoại</label>
+                        <p><span class="form-control" id="sdt" th:text="${phieuDangKy.sdt}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <p><span class="form-control" id="email" th:text="${phieuDangKy.email}"></span></p>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="truong">Tên trường</label>
+                        <p><span class="form-control" id="truong" th:text="${truongService.findTruongById(phieuDangKy.getTruongId()).getTenTruong()}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="ngayDangKy">Thời gian đăng ký</label>
+                        <p><span class="form-control" id="ngayDangKy" th:text="${phieuDangKy.ngayDangKy}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>THÔNG TIN PHIẾU ĐĂNG KÝ</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+        .card-body {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-control {
+            font-size: 1rem;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+        .container {
+            padding-top: 95px;
+            padding-bottom: 300px;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+        .col-md-6 {
+            margin: 20px 0;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">THÔNG TIN CUỘC THI</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tên cuộc thi:</strong> <span th:text="${phieuDangKy.cuocThi.tenCuocThi}"></span></p>
+                    <p><strong>Môn thi:</strong> <span th:text="${phieuDangKy.cuocThi.monThi.getTenMonThi()}"></span></p>
+                    <p><strong>Cấp thi:</strong> <span th:text="${loaiTruongService.getLoaiTruongById(phieuDangKy.cuocThi.loaiTruongId).getTenLoaiTruong()}"></span></p>
+                    <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(phieuDangKy.cuocThi.ngayThi, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p><strong>Địa điểm:</strong> <span th:text="${phieuDangKy.cuocThi.diaDiemThi}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">PHIẾU ĐĂNG KÝ</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="userCCCD" class="form-label">CCCD</label>
+                        <p><span class="form-control" id="userCCCD" th:text="${phieuDangKy.user.cccd}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="hoten" class="form-label">Họ và tên</label>
+                        <p><span class="form-control" id="hoten" th:text="${phieuDangKy.user.hoten}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sdt" class="form-label">Số điện thoại</label>
+                        <p><span class="form-control" id="sdt" th:text="${phieuDangKy.sdt}"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <p><span class="form-control" id="email" th:text="${phieuDangKy.email}"></span></p>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="truong" class="form-label">Tên trường</label>
+                        <p><span class="form-control" id="truong" th:text="${truongService.findTruongById(phieuDangKy.getTruongId()).getTenTruong()}"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngayDangKy" class="form-label">Thời gian đăng ký</label>
+                        <p><span class="form-control" id="ngayDangKy" th:text="${#temporals.format(phieuDangKy.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout::footer}"></th:block>
+</body>
+</html>
+

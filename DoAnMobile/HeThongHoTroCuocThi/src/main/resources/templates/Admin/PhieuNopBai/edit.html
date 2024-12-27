@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>CHẤM BÀI</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .main-content {
+            padding: 95px 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+        }
+
+        label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            color: black;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        .alert {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div style="padding-bottom: 300px;">
+    <div class="container main-content" style="padding: 95px;">
+        <!-- Tiêu đề -->
+        <h1><i class="fas fa-pen"></i> CHẤM BÀI</h1>
+
+        <!-- Form Chấm Bài -->
+        <form th:action="@{/Admin/PhieuNopBais/edit}" th:object="${phieuNopBai}" method="post">
+            <!-- Hiển thị lỗi -->
+            <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}"
+                 style="margin-bottom: 20px;"></div>
+
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{fileUrl}">
+            <input type="hidden" th:field="*{noiDung}">
+            <input type="hidden" th:field="*{user}">
+            <input type="hidden" th:field="*{cuocThiId}">
+
+            <!-- Nhận xét -->
+            <div class="form-group">
+                <label for="nhanXet">Nhận xét</label>
+                <textarea class="form-control" id="nhanXet" th:field="*{nhanXet}" rows="4"
+                          placeholder="Nhập nhận xét..."
+                          required></textarea>
+            </div>
+
+            <!-- Điểm -->
+            <div class="form-group">
+                <label for="diem">Điểm</label>
+                <input type="number" class="form-control" id="diem" th:field="*{diem}" placeholder="Nhập điểm..."
+                       required>
+            </div>
+
+            <!-- Nút Lưu và Quay lại -->
+            <div class="d-flex justify-content-between mt-4">
+                <a th:href="@{/Admin/PhieuNopBais/ChuaCham}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Trở về
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>

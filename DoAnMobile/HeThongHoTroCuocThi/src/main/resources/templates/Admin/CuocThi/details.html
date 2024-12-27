@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <title>CHI TIẾT CUỘC THI</title>
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        h1 {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        table.table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        table.table th, table.table td {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        table.table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table.table tbody tr:hover td {
+            background-color: #f1f3f5;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            color: black;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        .btn-sm {
+            font-size: 0.85rem;
+            padding: 8px 15px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .listQuyDinh, .listNoiDung {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div class="container" style="padding: 95px; padding-bottom: 300px;">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <h1 class="my-4">CHI TIẾT CUỘC THI</h1>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">THÔNG TIN</th>
+                    <th scope="col">CHI TIẾT</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Tên cuộc thi</td>
+                    <td th:text="${cuocThi.tenCuocThi}"></td>
+                </tr>
+                <tr>
+                    <td>Ngày thi</td>
+                    <td th:text="${#temporals.format(cuocThi.ngayThi, 'dd/MM/yyyy HH:mm a')}"></td>
+                </tr>
+                <tr>
+                    <td>Số lượng</td>
+                    <td th:text="${cuocThi.soLuongThiSinh}"></td>
+                </tr>
+                <tr>
+                    <td>Địa điểm</td>
+                    <td th:text="${cuocThi.diaDiemThi}"></td>
+                </tr>
+                <tr>
+                    <td>Môn thi</td>
+                    <td th:text="${cuocThi.monThi.tenMonThi}"></td>
+                </tr>
+                <tr>
+                    <td>Cấp thi</td>
+                    <td th:text="${loaiTruongService.getNameById(cuocThi.loaiTruongId)}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="button-container mb-4">
+        <a th:href="@{/Admin/CuocThis}" class="btn btn-primary">Trở về</a>
+        <a th:href="@{/Admin/CuocThis/quy-dinh/{id}(id=${cuocThi.id})}" class="btn btn-secondary">Quy định</a>
+        <a th:href="@{/Admin/PhieuNopBais/ChuaCham}" class="btn btn-secondary">Nội dung</a>
+        <a class="btn btn-primary btn-dangky" th:href="@{/Admin/PhieuDangKys/cuocThi/id/{id}(id=${cuocThi.id})}">Danh sách phiếu đăng ký</a>
+    </div>
+
+    <div id="quyDinhContainer" style="display: none;">
+        <h2>Danh sách Quy định</h2>
+        <div class="quyDinhPages">
+            <div class="navigationBtn">
+                <i class='fas fa-arrow-circle-left' id="prevBtnQuyDinh"></i>
+                <i class='fas fa-arrow-circle-right' id="nextBtnQuyDinh"></i>
+            </div>
+            <div th:each="qd : ${chiTietQuyDinhs}" class="listQuyDinh">
+                <h3 th:text="${qd.quyDinh.tenQuyDinh}"></h3>
+                <div th:text="${qd.quyDinh.moTaQuyDinh}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+<script th:src="@{/js/DetailsCuocThi.js}"></script>
+</body>
+</html>
+

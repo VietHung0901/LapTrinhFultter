@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi Tiết Người Dùng - Duyệt</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <th:block th:replace="~{layout::link-css}"></th:block>
+    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #ffffff; /* Nền trắng cho sự sạch sẽ và chuyên nghiệp */
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            border: 1px solid #ced4da; /* Đường viền nhẹ cho card */
+            border-radius: 8px; /* Bo góc cho card */
+        }
+
+        .card-header {
+            background-color: #f8f9fa; /* Nền cho tiêu đề card */
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .action-buttons a {
+            margin-right: 10px; /* Khoảng cách giữa các nút */
+        }
+
+        h1 {
+            text-align: center; /* Căn giữa tiêu đề */
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::headerAdmin}"></th:block>
+<div style="padding-top: 95px; padding-bottom: 300px;">
+    <h1>Chi Tiết Người Dùng</h1>
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    Thông Tin Người Dùng
+                </div>
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <span th:text="${successMessage}"></span>
+                </div>
+                <div th:if="${failMessage}" class="alert alert-danger">
+                    <span th:text="${failMessage}"></span>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img th:src="@{${user.imageUrl}}" class="img-fluid rounded" alt="Hình Ảnh Người Dùng"
+                             style="max-width: 150px;"/>
+                    </div>
+                    <p>
+                        <strong>Họ Tên:</strong> <span th:text="${user.hoten}"></span><br>
+                        <strong>Username:</strong> <span th:text="${user.username}"></span><br>
+                        <strong>CCCD:</strong> <span th:text="${user.cccd}"></span><br>
+                        <strong>Ngày Sinh:</strong> <span th:text="${user.ngaySinh}"></span><br>
+                        <strong>Email:</strong> <span th:text="${user.email}"></span><br>
+                        <strong>Số Điện Thoại:</strong> <span th:text="${user.phone}"></span><br>
+                        <strong>Trường:</strong> <span th:text="${user.truong.tenTruong}"></span><br>
+                        <strong>Giới tính:</strong>
+                        <span th:text="${user.gender == 0 ? 'Nam' : user.gender == 1 ? 'Nữ' : 'Chưa xác định'}"></span><br>
+
+                      <strong>Trạng Thái:</strong>
+                        <span th:if="${user.trangThai == 0}" class="text-warning" th:text="'Chưa xử lý'"></span>
+                        <span th:if="${user.trangThai == 1}" class="text-success" th:text="'Thành công'"></span>
+                        <span th:if="${user.trangThai == 2}" class="text-danger" th:text="'Thất bại'"></span>
+                    </p>
+                    <div class="action-buttons text-center">
+                        <a th:href="@{/KhongDuyet/{id}(id=${user.id})}" class="btn btn-danger">Không Duyệt</a>
+                        <a th:href="@{/Duyet/{id}(id=${user.id})}" class="btn btn-success">Duyệt</a>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/list/ChuaDuyet}" class="btn btn-secondary mt-3">Trở Về</a>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{layout::footerAdmin}"></th:block>
+</body>
+</html>

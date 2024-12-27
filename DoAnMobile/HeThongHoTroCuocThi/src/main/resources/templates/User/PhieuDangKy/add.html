@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PHIẾU ĐĂNG LÝ</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(247, 251, 252, 0.9), rgba(238, 249, 254, 0.9)),
+            url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
+            color: #343a40;
+            overflow-x: hidden;
+            mix-blend-mode: normal;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            border-radius: 0.25rem;
+        }
+        .btn {
+            border-radius: 0.25rem;
+        }
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{layout::header}"></th:block>
+<div class="container" style="padding-top: 95px; padding-bottom: 200px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">THÔNG TIN CUỘC THI</h4>
+                </div>
+                <div class="card-body">
+                    <p>Tên cuộc thi: <span th:text="${cuocThi.tenCuocThi}"></span></p>
+                    <p>Môn thi: <span th:text="${cuocThi.monThi.getTenMonThi()}"></span></p>
+                    <p>Cấp thi: <span th:text="${loaiTruongService.getLoaiTruongById(cuocThi.loaiTruongId).getTenLoaiTruong()}"></span></p>
+                    <p>Thời gian: <span th:text="${#temporals.format(cuocThi.ngayThi, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p>Địa điểm: <span th:text="${cuocThi.diaDiemThi}"></span></p>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4 class="mb-0">PHIẾU ĐĂNG KÝ</h4>
+                </div>
+                <div class="card-body">
+                    <!--    Xác nhận thông tin-->
+                    <div class="form-group">
+                        <label for="cccd" class="form-label">CCCD</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="cccd" required placeholder="Nhập cccd">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" id="confirmInfoButton">Xác nhận</button>
+                            </div>
+                        </div>
+                        <div th:if="${errorMessage != null}" class="alert alert-danger" th:text="${errorMessage}" style="margin-top: 20px; margin-bottom: 20px;"></div>
+                    </div>
+                    <h2 class="mb-4">XÁC NHẬN THÔNG TIN</h2>
+                    <div class="form-group">
+                        <label for="hoten" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="hoten" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <img id="imageUrl" src="#" alt="User Image" style="max-width: 200px; display: none;">
+                    </div>
+
+                    <!--Form xác nhận thông tin đăng ký-->
+                    <form th:action="@{/User/PhieuDangKys/add}" th:object="${phieuDangKy}" method="post">
+
+                        <input type="hidden" id="userId"  th:field="*{userId}">
+                        <input type="hidden" id="cuocThi" th:field="*{cuocThi}">
+                        <div class="form-group">
+                            <label for="sdt" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="sdt" th:field="*{sdt}" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" th:field="*{email}" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="truongName" class="form-label">Tên trường</label>
+                            <div class="input-group">
+                                <input type="hidden" class="form-control" id="truongId" th:field="*{truongId}" required readonly>
+                                <input type="text" class="form-control" id="truongName" required readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender" class="form-label">Giới tính</label>
+                            <span id="gender" class="form-control" required readonly></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/TaoPhieuDangKy.js}"></script>
+<th:block th:replace="~{layout::footer}"></th:block>
+
+</body>
+</html>
