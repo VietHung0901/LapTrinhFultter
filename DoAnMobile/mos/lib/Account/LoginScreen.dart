@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mos/ApiService/ApiUserService.dart';
 import '../Admin/AdminHomeScreen.dart';
 import '../User/UserHomeScreen.dart';
+import 'package:mos/ApiService/Auth/AuthService.dart';
+import 'package:mos/Class/LoginRequest.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,58 +10,51 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  final ApiUserService apiUserService = ApiUserService('http://localhost:8080'); // URL của Spring Boot
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthService authService = AuthService();
 
-  // Mock function for login
-  Future<void> _login() async {
-    setState(() {
-      _isLoading = true;
-    });
+  void handleLogin() async {
+    try {
+      final request = LoginRequest(
+        username: usernameController.text,
+        password: passwordController.text,
+      );
 
-// Gọi API login
-    bool isSuccess = await apiUserService.login(
-      _usernameController.text, 
-      _passwordController.text,
-    );
+      setState(() {
+        _isLoading = true;
+      });
 
-    setState(() {
-      _isLoading = false;
-    });
+      final response = await authService.login(request);
 
-    if (isSuccess) {
-      String userRole = await apiUserService.getUserRole(_usernameController.text);  // API kiểm tra quyền của người dùng
+      setState(() {
+        _isLoading = false;
+      });
 
-      if (userRole == "MANAGER") {
+      if (response.role == "MANAGER") {
         // Điều hướng đến trang Home cho Admin
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => AdminHomeScreen()),
         );
-      } else if (userRole == "USER") {
+      } else if (response.role == "USER") {
         // Điều hướng đến trang Home cho Thí sinh
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => UserHomeScreen()),
         );
       }
-    } else {
-      // Nếu đăng nhập thất bại, hiển thị thông báo lỗi
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Đăng nhập thất bại!"),
-          content: const Text("Username hoặc password không tồn tại."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Thử lại"),
-            ),
-          ],
-        ),
-      );
+    } catch (e) {
+      // Reset trạng thái _isLoading nếu có lỗi
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Hiển thị lỗi
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Login failed: $e'),
+      ));
     }
   }
 
@@ -71,83 +65,93 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text("HỆ THỐNG HỖ TRỢ CUỘC THI MOS"),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo hoặc tên hệ thống
-            Center(
-              child: Icon(
-                Icons.school, // Biểu tượng học tập
-                size: 100,
-                color: Colors.blueAccent,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'XIN CHÀO',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Đăng nhập tại đây',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 30),
-            // Username Input
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: "Username",
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Password Input
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Password",
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Loading Indicator or Login Button
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: const Text("Đăng nhập"),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                       backgroundColor: Colors.blueAccent,
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: orientation == Orientation.portrait
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start, // Căn chỉnh lại khi quay ngang
+                children: [
+                  // Logo hoặc tên hệ thống
+                  const Center(
+                    child: Icon(
+                      Icons.school, // Biểu tượng học tập
+                      size: 100,
+                      color: Colors.blueAccent,
                     ),
                   ),
-            const SizedBox(height: 20),
-            // Option to reset password or contact admin
-            TextButton(
-              onPressed: () {
-                // Action khi quên mật khẩu hoặc cần trợ giúp
-                Navigator.pushNamed(context, '/help');
-              },
-              child: const Text("Quên mật khẩu"),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'XIN CHÀO',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Đăng nhập tại đây',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // Username Input
+                  TextField(
+                    controller: usernameController,
+                    decoration: const InputDecoration(
+                      labelText: "Username",
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Password Input
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Loading Indicator or Login Button
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: handleLogin,
+                          child: const Text("Đăng nhập"),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 100, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Colors.blueAccent,
+                          ),
+                        ),
+                  const SizedBox(height: 20),
+                  // Option to reset password or contact admin
+                  TextButton(
+                    onPressed: () {
+                      // Action khi quên mật khẩu hoặc cần trợ giúp
+                      Navigator.pushNamed(context, '/help');
+                    },
+                    child: const Text("Quên mật khẩu"),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

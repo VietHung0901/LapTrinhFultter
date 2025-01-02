@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:mos/Admin/AdminDetailCuocThi.dart';
+import 'package:mos/ApiService/HTTPService.dart';
 
 class CuocThiListScreen extends StatefulWidget {
   @override
@@ -12,22 +12,33 @@ class CuocThiListScreen extends StatefulWidget {
 class _CuocThiListScreenState extends State<CuocThiListScreen> {
   bool _isLoading = true;
   List<dynamic> _contests = [];
-
-  // Lấy danh sách cuộc thi từ API
+  final HTTPService httpService = HTTPService();
+  
+  // Gọi API tải cuộc thi
   Future<void> _fetchContests() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8080/api/cuocThi'));
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (response.statusCode == 200) {
+    try {
+      final response = await httpService.get('/api/cuocThi');
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _contests = json.decode(response.body);
+          _isLoading = false;
+        });
+      } else {
+        // throw Exception('Failed to load contests');
+        throw Exception(response.statusCode);
+      }
+    } catch (e) {
       setState(() {
-        _contests = json.decode(response.body);
         _isLoading = false;
       });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      throw Exception('Failed to load contests');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 

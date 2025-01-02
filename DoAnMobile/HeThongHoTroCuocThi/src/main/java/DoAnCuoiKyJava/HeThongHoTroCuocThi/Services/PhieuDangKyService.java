@@ -1,7 +1,7 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Services;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities.*;
-import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.ICuocThiRepository;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.IPhieuDangKyRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.ITruongRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Request.PhieuDangKyCreate;
@@ -146,5 +146,24 @@ public class PhieuDangKyService {
         return listFail;
     }
 
-
+    public List<Integer> kiemTraThongTin(List<PhieuKetQuaRequest> list, Long cuocThiId) {
+        List<Integer> listKetQua = new ArrayList<>();
+        List<PhieuDangKy> listPDKCuocThi = getAllPhieuDangKystheoCuocThi(cuocThiId);
+        // Duyệt qua từng PhieuDangKy trong danh sách
+        for (PhieuKetQuaRequest pkq : list) {
+            int ketQua = 3; // Không xác định
+            for(PhieuDangKy pdkCuocThi: listPDKCuocThi)
+                // Kiểm tra tồn tại mã phiếu trong cuộc thi không?
+                if(pkq.getMaPhieu().equals(pdkCuocThi.getId().toString()))
+                    // Nếu có mã phiếu trong cuộc thi sẽ kiểm tra tiếp đến thông tin (cccd và họ tên)
+                    if (!pkq.getCccd().equals(pdkCuocThi.getUser().getCccd()) || !pkq.getHoTen().equals(pdkCuocThi.getUser().getHoten())) {
+                        ketQua = 2; // Sai thông tin nếu không khớp CCCD hoặc Họ tên
+                    } else {
+                        ketQua = 1; // Nếu mọi thứ khớp, thì kết quả là chính xác
+                        break; // Thoát khỏi vòng lặp nếu đã tìm thấy kết quả chính xác
+                    }
+            listKetQua.add(ketQua);
+        }
+        return listKetQua;
+    }
 }

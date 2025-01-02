@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:mos/Account/LoginScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomeScreen extends StatelessWidget {
+  // Hàm logout
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');  // Xóa token khỏi SharedPreferences
+
+    // Điều hướng về màn hình đăng nhập
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,6 +25,15 @@ class UserHomeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.orangeAccent,
         elevation: 4.0,
+        actions: [
+          // Thêm icon Logout trên appBar
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () {
+              logout(context);  // Xử lý logout khi nhấn vào biểu tượng
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

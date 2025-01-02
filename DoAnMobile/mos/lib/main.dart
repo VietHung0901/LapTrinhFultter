@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Account/LoginScreen.dart'; // Import LoginScreen
+import 'Account/LoginScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Login Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginScreen(), // Màn hình bắt đầu là LoginScreen
+      home: LoginScreen(),
     );
   }
 }

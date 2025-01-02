@@ -3,22 +3,12 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_cropper/image_cropper.dart';
-
-class CameraApp extends StatelessWidget {
-  const CameraApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Camera App',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const CameraScreen(),
-    );
-  }
-}
+import 'package:mos/Admin/ScorePage.dart';
+import 'package:mos/Class/PhieuKetQua.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+  final int contestId;
+  const CameraScreen({required this.contestId});
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -70,10 +60,10 @@ class _CameraScreenState extends State<CameraScreen> {
     }
     return null;
   }
-    
+
   Future<void> _openlib() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
-    
+
     if (photo != null) {
       File? croppedImage = await _cropImage(File(photo.path));
       _imageSrc = File(photo.path); // Lưu đường dẫn ảnh nguồn để sửa
@@ -88,7 +78,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> _openCamera() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    
+
     if (photo != null) {
       File? croppedImage = await _cropImage(File(photo.path));
       _imageSrc = File(photo.path); // Lưu đường dẫn ảnh nguồn để sửa
@@ -101,156 +91,194 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  // Hàm scan chữ từ ảnh
-  Future<void> _scanTextFromImage() async {
-    if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No image available for scanning')),
-      );
-      return;
-    }
-
-    final InputImage inputImage = InputImage.fromFile(_image!);
-    final TextRecognizer textRecognizer = TextRecognizer();
-
-    try {
-      final RecognizedText recognizedText =
-          await textRecognizer.processImage(inputImage);
-
-      // Hiển thị kết quả
-      if (recognizedText.text.isNotEmpty) {
-        showDialog(
-          // ignore: use_build_context_synchronously
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Scanned Text'),
-            content: Text(recognizedText.text),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No text found in the image')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      textRecognizer.close();
-    }
+  // Hàm scan bảng điểm
+  Future<void> _scanTextForScoreTable() async {
+  if (_image == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('No image available for scanning')),
+    );
+    return;
   }
 
-  // Hàm scan table
-  Future<void> _scanTextForScoreTable() async {
-    if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No image available for scanning')),
-      );
-      return;
-    }
+  final InputImage inputImage = InputImage.fromFile(_image!);
+  final TextRecognizer textRecognizer = TextRecognizer();
 
-    final InputImage inputImage = InputImage.fromFile(_image!);
-    final TextRecognizer textRecognizer = TextRecognizer();
+  try {
+    // OCR quét văn bản
+    final RecognizedText recognizedText =
+        await textRecognizer.processImage(inputImage);
+    final String scannedText = recognizedText.text;
+    print(scannedText); // Kiểm tra nội dung văn bản quét
 
-    try {
-      final RecognizedText recognizedText =
-          await textRecognizer.processImage(inputImage);
+    // Tách và xử lý văn bản
+    final List<Map<String, dynamic>> scoreTable = _processScannedText(scannedText);
 
-      // Xử lý văn bản OCR
-      String scannedText = recognizedText.text;
-
-      // Sau khi nhận diện văn bản, in ra kết quả
-      print('OCR Result:');
-      print(scannedText);
-
-      // Tách dòng
-      List<String> lines = scannedText.split('\n');
-
-      // Biến lưu dữ liệu bảng điểm
-      List<Map<String, dynamic>> scoreTable = [];
-
-      for (String line in lines) {
-        // Giả sử mỗi dòng chứa dữ liệu: "Họ tên - Mã số - Điểm 1 - Điểm 2"
-        List<String> parts =
-            line.split(RegExp(r'\s{2,}')); // Tách bằng khoảng trắng hoặc tab
-
-        if (parts.length >= 4) {
-          scoreTable.add({
-            'name': parts[0], // Họ tên
-            'studentId': parts[1], // Mã số sinh viên
-            'score1': double.tryParse(parts[2]) ?? 0.0, // Điểm môn 1
-            'score2': double.tryParse(parts[3]) ?? 0.0, // Điểm môn 2
-          });
-        }
-      }
-
-      // Hiển thị kết quả
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Scanned Score Table'),
-          content: Text(scoreTable.map((e) => e.toString()).join('\n')),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
+    if (scoreTable.isNotEmpty) {
+      // Chuyển sang trang hiển thị bảng điểm
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScorePage(scoreTable: scoreTable,contestId: widget.contestId),
         ),
       );
-    } catch (e) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        const SnackBar(content: Text('No valid data found in the scanned text.')),
       );
-    } finally {
-      textRecognizer.close();
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error during scanning: $e')),
+    );
+  } finally {
+    textRecognizer.close();
+  }
+}
+
+
+  List<Map<String, dynamic>> _processScannedText(String scannedText) {
+    List<Map<String, dynamic>> scoreTable = [];
+    final List<String> lines = scannedText.split('\n');
+
+    int soCot = 6;
+    int n = (lines.length / soCot).toInt(); // số dòng (số thí sinh)
+    List<PhieuKetQua> list = List.generate(n, (index) => PhieuKetQua());
+
+    for (int i = 0; i < lines.length; i = i + n) {
+      // Mỗi lần sẽ nhảy n dòng
+      for (int j = 0; j < n; j++) {
+        // Lưu từng dòng
+        if (i < n) {
+          list[j].maPhieu = lines[i + j].toString();
+        } else if (i < n * 2) {
+          list[j].cccd = lines[i + j].toString();
+        } else if (i < n * 3) {
+          list[j].hoTen = lines[i + j].toString();
+        } else if (i < n * 4) {
+          list[j].phut = int.tryParse(lines[i + j].toString()) ?? -1; // -1 sẽ là int
+ // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
+        } else if (i < n * 5) {
+          list[j].giay = int.tryParse(lines[i + j].toString()) ??
+              -2; // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
+        } else if (i < n * 6) {
+          list[j].diem = int.tryParse(lines[i + j].toString()) ??
+              -3; // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
+        }
+      }
+    }
+
+    for (int j = 0; j < n; j++) {
+      scoreTable.add({
+        'maPhieu': list[j].maPhieu,
+        'cccd': list[j].cccd,
+        'hoTen': list[j].hoTen,
+        'phut': list[j].phut,
+        'giay': list[j].giay,
+        'diem': list[j].diem,
+        'trangThai': 0,
+      });
+    }
+
+    return scoreTable;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera App'),
+        title: const Text('Nhập điểm'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent, // Thêm màu nền cho app bar
       ),
-      body: Center(
+      body: SingleChildScrollView( // Đảm bảo có thể cuộn khi màn hình nhỏ
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Hiển thị ảnh hoặc thông báo
             _image == null
-                ? const Text('No image selected.')
-                : GestureDetector(
-                    onTap: _editImage, // Chỉnh sửa ảnh khi nhấn vào ảnh
-                    child: Image.file(
-                      _image!,
-                      width: 300,
-                      height: 300,
-                      fit: BoxFit.cover,
+                ? Container(
+                    height: 250,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey[200],
+                    ),
+                    child: const Center(
+                      child: Text('No image selected.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                    ),
+                  )
+                : Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: GestureDetector(
+                        onTap: () {
+                          // Đặt hàm để chỉnh sửa ảnh
+                          _editImage();
+                        },
+                        child: Image.file(
+                          _image!,
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _openCamera,
-              child: const Text('Mở Camera'),
+
+            // Các nút chức năng (Mở Camera, Thư viện)
+            Divider(color: Colors.grey[400], thickness: 1.0),
+            const SizedBox(height: 16),
+            Wrap(  // Sử dụng Wrap để các nút không bị tràn khi nhỏ màn hình
+              spacing: 16,
+              alignment: WrapAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _openCamera,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Mở Camera'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(150, 50),
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _openlib,
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Mở Thư viện'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(150, 50),
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: _openlib,
-              child: const Text('Mở thư viện'),
-            ),
-            ElevatedButton(
-              onPressed: _scanTextFromImage,
-              child: const Text('Scan Text'),
-            ),
-            ElevatedButton(
-              onPressed: _scanTextForScoreTable,
-              child: const Text('Scan Score Table'),
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey[400], thickness: 1.0),
+            const SizedBox(height: 16),
+
+            // Các nút chức năng (Scan Text, Scan Score Table)
+            Wrap(
+              spacing: 16,
+              alignment: WrapAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _scanTextForScoreTable,
+                  icon: const Icon(Icons.table_chart),
+                  label: const Text('Scan Score Table'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(150, 50),
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

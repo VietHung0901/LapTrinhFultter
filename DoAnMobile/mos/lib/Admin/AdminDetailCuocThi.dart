@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:mos/Admin/AdminScanDiem.dart';
+import 'package:mos/ApiService/HTTPService.dart';
 
 class CuocThiDetailScreen extends StatefulWidget {
   final int contestId;
@@ -16,21 +16,32 @@ class CuocThiDetailScreen extends StatefulWidget {
 class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
   bool _isLoading = true;
   dynamic _contestDetail;
+  final HTTPService httpService = HTTPService();
 
   // Lấy thông tin chi tiết cuộc thi từ API
   Future<void> _fetchContestDetail() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/api/cuocThi/${widget.contestId}'));
+    try {
+      final response =
+          await httpService.get('/api/cuocThi/${widget.contestId}');
 
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
+        setState(() {
+          _contestDetail = json.decode(response.body);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        throw Exception('Failed to load contest details');
+      }
+    } catch (e) {
       setState(() {
-        _contestDetail = json.decode(response.body);
         _isLoading = false;
       });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      throw Exception('Failed to load contest details');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
@@ -64,12 +75,13 @@ class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Thông tin cuộc thi
                   _buildInfoRow('Ngày thi', _contestDetail['ngayThi']),
-                  _buildInfoRow('Số lượng thí sinh', _contestDetail['soLuongThiSinh'].toString()),
+                  _buildInfoRow('Số lượng thí sinh',
+                      _contestDetail['soLuongThiSinh'].toString()),
                   _buildInfoRow('Địa điểm thi', _contestDetail['diaDiemThi']),
-                  
+
                   const SizedBox(height: 30),
 
                   // Nút nhập điểm
@@ -77,15 +89,16 @@ class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
                     onPressed: () {
                       // Thực hiện hành động nhập điểm
                       Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          CameraApp()), // Điều hướng đến màn hình tới scan điểm
-                );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CameraScreen(contestId:  _contestDetail['id'])), // Điều hướng đến màn hình tới scan điểm
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -95,7 +108,6 @@ class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
-                  
                 ],
               ),
             ),

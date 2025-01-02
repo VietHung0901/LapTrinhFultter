@@ -124,7 +124,7 @@
 			<version>1.16.1</version>
 		</dependency>
 
-<!--		Flutter-->
+<!--		Flutter - JWT Token-->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -143,6 +143,7 @@
 			<version>0.11.5</version>
 		</dependency>
 	</dependencies>
+<!--	-->
 	<build>
 		<plugins>
 			<plugin>

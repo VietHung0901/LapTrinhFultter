@@ -20,6 +20,7 @@ import java.util.*;
 public class PhieuKetQuaService {
     private final IPhieuKetQuaRepository phieuKetQuaRepository;
     private final IPhieuDangKyRepository phieuDangKyRepository;
+    private final PhieuDangKyService phieuDangKyService;
 
     //lấy các phiếu kết quả có trạng thái là 1 (Hiện)
     public List<PhieuKetQua> getAllPhieuKetQua() {
@@ -183,4 +184,26 @@ public class PhieuKetQuaService {
         return phieuKetQuaRepository.findByCuocThiAndTruong(cuocThi, truongId);
     }
 
+    public PhieuKetQua mapPhieuKetQuaRequestToPhieuKetQua(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest phieuKetQua) {
+        PhieuKetQua pkq = new PhieuKetQua();
+
+        pkq.setPhut(phieuKetQua.getPhut());
+        pkq.setGiay(phieuKetQua.getGiay());
+        pkq.setDiem(phieuKetQua.getDiem());
+        String pdkIdString = phieuKetQua.getMaPhieu(); // Lấy giá trị kiểu String§
+        Long pdkId = Long.parseLong(pdkIdString); // Chuyển String sang long§
+        PhieuDangKy pdk = phieuDangKyRepository.findById(pdkId).orElseThrow(() -> new EntityNotFoundException("PhieuDangKy not found with id: " + pdkId));
+        pkq.setPhieuDangKy(pdk);
+        return pkq;
+    }
+
+    // Lưu danh sách phiếu kết quả vào cơ sở dữ liệu
+    public void luuDanhSachPhieuKetQua(List<DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest> phieuKetQuaList) {
+        for(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest pkqRequest: phieuKetQuaList)
+        {
+            PhieuKetQua pkq = mapPhieuKetQuaRequestToPhieuKetQua(pkqRequest);
+            pkq.setTrangThai(1);
+            phieuKetQuaRepository.save(pkq);
+        }
+    }
 }

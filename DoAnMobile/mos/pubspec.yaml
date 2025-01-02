@@ -43,7 +43,9 @@ dependencies:
   image_cropper: ^3.0.2
   # Dùng để kết nối với http
   http: ^0.13.6
-
+  # Dùng để lưu token trên biến tạm
+  shared_preferences: ^2.0.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
