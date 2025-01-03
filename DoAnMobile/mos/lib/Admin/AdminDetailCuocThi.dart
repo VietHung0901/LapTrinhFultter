@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:mos/Admin/AdminScanDiem.dart';
 import 'package:mos/ApiService/HTTPService.dart';
+import 'package:mos/Class/StringURL.dart';
 
 class CuocThiDetailScreen extends StatefulWidget {
   final int contestId;
@@ -22,7 +23,7 @@ class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
   Future<void> _fetchContestDetail() async {
     try {
       final response =
-          await httpService.get('/api/cuocThi/${widget.contestId}');
+          await httpService.get(StringURL().admincuocthi + '/detail/${widget.contestId}');
 
       if (response.statusCode == 200) {
         setState(() {
@@ -33,14 +34,14 @@ class _CuocThiDetailScreenState extends State<CuocThiDetailScreen> {
         setState(() {
           _isLoading = false;
         });
-        throw Exception('Failed to load contest details');
+        throw Exception('Tải chi tiết cuộc thi thất bại!');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('Lỗi: $e')),
       );
     }
   }

@@ -1,4 +1,4 @@
-package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class;
+package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request;
 
 import lombok.*;
 

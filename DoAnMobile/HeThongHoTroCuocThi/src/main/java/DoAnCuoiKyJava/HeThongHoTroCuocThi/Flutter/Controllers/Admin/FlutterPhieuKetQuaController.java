@@ -1,5 +1,5 @@
-package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Controllers;
-import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest;
+package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Controllers.Admin;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Services.PhieuDangKyService;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Services.PhieuKetQuaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/api/ADMIN/PhieuKetQua")
 public class FlutterPhieuKetQuaController {
 
     @Autowired
@@ -18,7 +18,7 @@ public class FlutterPhieuKetQuaController {
     @Autowired
     private PhieuDangKyService phieuDangKyService;
 
-    @PutMapping("/api/phieu-ket-qua/kiem-tra-danh-sach")
+    @PutMapping("/kiem-tra-danh-sach")
     public ResponseEntity<List<Integer>> kiemTraDanhSachPhieuKetQua(@RequestBody List<PhieuKetQuaRequest> phieuKetQuaList, @RequestParam Long cuocThiId) {
         try {
             // Kiểm tra và lấy danh sách kết quả kiểm tra
@@ -32,9 +32,8 @@ public class FlutterPhieuKetQuaController {
         }
     }
 
-
     // API để nhận danh sách phiếu kết quả và lưu vào cơ sở dữ liệu
-    @PostMapping("/api/phieu-ket-qua/nhap-danh-sach")
+    @PostMapping("/nhap-danh-sach")
     public ResponseEntity<String> nhapDanhSachPhieuKetQua(@RequestBody List<PhieuKetQuaRequest> phieuKetQuaList) {
         try {
             // Lưu danh sách vào cơ sở dữ liệu

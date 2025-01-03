@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Hiển thị lỗi
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Login failed: $e'),
+        content: Text('Đăng nhập thất bại! Lỗi: $e'),
       ));
     }
   }

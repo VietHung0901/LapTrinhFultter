@@ -184,7 +184,7 @@ public class PhieuKetQuaService {
         return phieuKetQuaRepository.findByCuocThiAndTruong(cuocThi, truongId);
     }
 
-    public PhieuKetQua mapPhieuKetQuaRequestToPhieuKetQua(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest phieuKetQua) {
+    public PhieuKetQua mapPhieuKetQuaRequestToPhieuKetQua(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest phieuKetQua) {
         PhieuKetQua pkq = new PhieuKetQua();
 
         pkq.setPhut(phieuKetQua.getPhut());
@@ -198,8 +198,8 @@ public class PhieuKetQuaService {
     }
 
     // Lưu danh sách phiếu kết quả vào cơ sở dữ liệu
-    public void luuDanhSachPhieuKetQua(List<DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest> phieuKetQuaList) {
-        for(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest pkqRequest: phieuKetQuaList)
+    public void luuDanhSachPhieuKetQua(List<DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest> phieuKetQuaList) {
+        for(DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest pkqRequest: phieuKetQuaList)
         {
             PhieuKetQua pkq = mapPhieuKetQuaRequestToPhieuKetQua(pkqRequest);
             pkq.setTrangThai(1);

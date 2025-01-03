@@ -1,4 +1,4 @@
-package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class;
+package DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request;
 
 public class LoginRequest {
     private String username;
@@ -21,4 +21,3 @@ public class LoginRequest {
         this.password = password;
     }
 }
-

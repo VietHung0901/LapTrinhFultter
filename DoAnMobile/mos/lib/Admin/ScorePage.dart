@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mos/ApiService/HTTPService.dart';
+import 'package:mos/Class/StringURL.dart';
 
 class ScorePage extends StatefulWidget {
   final int contestId;
@@ -24,30 +25,7 @@ class _ScorePageState extends State<ScorePage> {
     scoreTable = widget.scoreTable; // Lưu scoreTable từ widget vào state
   }
 
-  // Hàm nhập điểm
-  Future<String> nhapDanhSachPhieuKetQua() async {
-    List<Map<String, dynamic>> jsonList = scoreTable;
-
-    // Gửi yêu cầu POST đến API
-    try {
-      final response = await httpService.postList(
-        '/api/phieu-ket-qua/nhap-danh-sach', // Thêm cuocThiId vào URL
-        jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
-      );
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body)),
-        );
-        return response.body; // Trả về thông báo từ server
-      } else {
-        throw Exception('Lỗi: ${response.statusCode} - ${response.body}');
-      }
-    } catch (e) {
-      throw Exception('Lỗi khi gọi API: $e');
-    }
-  }
-
-  // Hàm kiểm tra thông tin
+// Hàm kiểm tra thông tin
   Future<List<Map<String, dynamic>>> kiemTraDanhSach() async {
     try {
       // Tạo danh sách các phiếu kết quả dưới dạng JSON
@@ -55,7 +33,7 @@ class _ScorePageState extends State<ScorePage> {
 
       // Gửi yêu cầu PUT đến API
       final response = await httpService.putList(
-        '/api/phieu-ket-qua/kiem-tra-danh-sach?cuocThiId=${widget.contestId}', // Thêm cuocThiId vào URL
+        StringURL().adminphieuketqua + '/kiem-tra-danh-sach?cuocThiId=${widget.contestId}', // Thêm cuocThiId vào URL
         jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
       );
 
@@ -87,6 +65,29 @@ class _ScorePageState extends State<ScorePage> {
       }
     } catch (e) {
       throw Exception('Có lỗi xảy ra: $e');
+    }
+  }
+  
+  // Hàm nhập điểm
+  Future<String> nhapDanhSachPhieuKetQua() async {
+    List<Map<String, dynamic>> jsonList = scoreTable;
+
+    // Gửi yêu cầu POST đến API
+    try {
+      final response = await httpService.postList(
+        StringURL().adminphieuketqua + '/nhap-danh-sach', // Thêm cuocThiId vào URL
+        jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
+      );
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.body)),
+        );
+        return response.body; // Trả về thông báo từ server
+      } else {
+        throw Exception('Lỗi: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi gọi API: $e');
     }
   }
 
@@ -147,11 +148,11 @@ class _ScorePageState extends State<ScorePage> {
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         DataColumn(
-                          label: Text('Họ Tên',
+                          label: Text('CCCD',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         DataColumn(
-                          label: Text('CCCD',
+                          label: Text('Họ Tên',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         DataColumn(
@@ -173,8 +174,8 @@ class _ScorePageState extends State<ScorePage> {
                         return DataRow(
                           cells: [
                             DataCell(Text(entry['maPhieu'] ?? '')),
-                            DataCell(Text(entry['hoTen'] ?? '')),
                             DataCell(Text(entry['cccd'] ?? '')),
+                            DataCell(Text(entry['hoTen'] ?? '')),
                             DataCell(Text(
                               '${entry['phut']?.toString().padLeft(2, '0') ?? '00'}:${entry['giay']?.toString().padLeft(2, '0') ?? '00'}',
                             )),

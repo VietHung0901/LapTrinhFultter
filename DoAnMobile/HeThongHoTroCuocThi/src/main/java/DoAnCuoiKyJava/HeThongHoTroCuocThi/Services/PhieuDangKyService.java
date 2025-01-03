@@ -1,7 +1,7 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Services;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities.*;
-import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Class.PhieuKetQuaRequest;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.IPhieuDangKyRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.ITruongRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Request.PhieuDangKyCreate;
@@ -14,12 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

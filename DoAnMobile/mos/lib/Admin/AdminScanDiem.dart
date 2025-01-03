@@ -43,14 +43,14 @@ class _CameraScreenState extends State<CameraScreen> {
       ],
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Image',
+          toolbarTitle: 'Cắt ảnh',
           toolbarColor: Colors.blue,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Image',
+          title: 'Cắt ảnh',
         ),
       ],
     );
@@ -93,55 +93,60 @@ class _CameraScreenState extends State<CameraScreen> {
 
   // Hàm scan bảng điểm
   Future<void> _scanTextForScoreTable() async {
-  if (_image == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No image available for scanning')),
-    );
-    return;
-  }
-
-  final InputImage inputImage = InputImage.fromFile(_image!);
-  final TextRecognizer textRecognizer = TextRecognizer();
-
-  try {
-    // OCR quét văn bản
-    final RecognizedText recognizedText =
-        await textRecognizer.processImage(inputImage);
-    final String scannedText = recognizedText.text;
-    print(scannedText); // Kiểm tra nội dung văn bản quét
-
-    // Tách và xử lý văn bản
-    final List<Map<String, dynamic>> scoreTable = _processScannedText(scannedText);
-
-    if (scoreTable.isNotEmpty) {
-      // Chuyển sang trang hiển thị bảng điểm
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ScorePage(scoreTable: scoreTable,contestId: widget.contestId),
-        ),
-      );
-    } else {
+    if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No valid data found in the scanned text.')),
+        const SnackBar(content: Text('Không có hình ảnh để quét.')),
       );
+      return;
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error during scanning: $e')),
-    );
-  } finally {
-    textRecognizer.close();
+
+    final InputImage inputImage = InputImage.fromFile(_image!);
+    final TextRecognizer textRecognizer = TextRecognizer();
+
+    try {
+      // OCR quét văn bản
+      final RecognizedText recognizedText =
+          await textRecognizer.processImage(inputImage);
+      final String scannedText = recognizedText.text;
+      print(scannedText); // Kiểm tra nội dung văn bản quét
+
+      // Tách và xử lý văn bản
+      final List<Map<String, dynamic>> scoreTable =
+          _processScannedText(scannedText);
+
+      if (scoreTable.isNotEmpty) {
+        // Chuyển sang trang hiển thị bảng điểm
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ScorePage(scoreTable: scoreTable, contestId: widget.contestId),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Không tìm thấy dữ liệu hợp lệ trong văn bản được quét.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi trong quá trình quét: $e')),
+      );
+    } finally {
+      textRecognizer.close();
+    }
   }
-}
-
-
+  
   List<Map<String, dynamic>> _processScannedText(String scannedText) {
     List<Map<String, dynamic>> scoreTable = [];
     final List<String> lines = scannedText.split('\n');
 
     int soCot = 6;
     int n = (lines.length / soCot).toInt(); // số dòng (số thí sinh)
+    if (n<1)
+      return scoreTable;
     List<PhieuKetQua> list = List.generate(n, (index) => PhieuKetQua());
 
     for (int i = 0; i < lines.length; i = i + n) {
@@ -155,8 +160,9 @@ class _CameraScreenState extends State<CameraScreen> {
         } else if (i < n * 3) {
           list[j].hoTen = lines[i + j].toString();
         } else if (i < n * 4) {
-          list[j].phut = int.tryParse(lines[i + j].toString()) ?? -1; // -1 sẽ là int
- // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
+          list[j].phut =
+              int.tryParse(lines[i + j].toString()) ?? -1; // -1 sẽ là int
+          // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
         } else if (i < n * 5) {
           list[j].giay = int.tryParse(lines[i + j].toString()) ??
               -2; // Nếu không thể chuyển đổi, gán giá trị mặc định là 0.0
@@ -167,18 +173,25 @@ class _CameraScreenState extends State<CameraScreen> {
       }
     }
 
+    // Tạo bảng điểm với giá trị mặc định cho các trường hợp thiếu dữ liệu
     for (int j = 0; j < n; j++) {
       scoreTable.add({
-        'maPhieu': list[j].maPhieu,
-        'cccd': list[j].cccd,
-        'hoTen': list[j].hoTen,
-        'phut': list[j].phut,
-        'giay': list[j].giay,
-        'diem': list[j].diem,
-        'trangThai': 0,
+        'maPhieu':
+            list[j].maPhieu ?? 'Chưa có mã phiếu', // Gán giá trị mặc định
+        'cccd': list[j].cccd ?? 'Chưa có CCCD', // Gán giá trị mặc định
+        'hoTen': list[j].hoTen ?? 'Chưa có họ tên', // Gán giá trị mặc định
+        'phut': list[j].phut != -1
+            ? list[j].phut
+            : 0, // Gán giá trị mặc định nếu không hợp lệ
+        'giay': list[j].giay != -2
+            ? list[j].giay
+            : 0, // Gán giá trị mặc định nếu không hợp lệ
+        'diem': list[j].diem != -3
+            ? list[j].diem
+            : 0, // Gán giá trị mặc định nếu không hợp lệ
+        'trangThai': 0, // Trạng thái mặc định
       });
     }
-
     return scoreTable;
   }
 
@@ -190,7 +203,8 @@ class _CameraScreenState extends State<CameraScreen> {
         centerTitle: true,
         backgroundColor: Colors.blueAccent, // Thêm màu nền cho app bar
       ),
-      body: SingleChildScrollView( // Đảm bảo có thể cuộn khi màn hình nhỏ
+      body: SingleChildScrollView(
+        // Đảm bảo có thể cuộn khi màn hình nhỏ
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -204,7 +218,8 @@ class _CameraScreenState extends State<CameraScreen> {
                       color: Colors.grey[200],
                     ),
                     child: const Center(
-                      child: Text('No image selected.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                      child: Text('No image selected.',
+                          style: TextStyle(fontSize: 18, color: Colors.grey)),
                     ),
                   )
                 : Card(
@@ -233,7 +248,8 @@ class _CameraScreenState extends State<CameraScreen> {
             // Các nút chức năng (Mở Camera, Thư viện)
             Divider(color: Colors.grey[400], thickness: 1.0),
             const SizedBox(height: 16),
-            Wrap(  // Sử dụng Wrap để các nút không bị tràn khi nhỏ màn hình
+            Wrap(
+              // Sử dụng Wrap để các nút không bị tràn khi nhỏ màn hình
               spacing: 16,
               alignment: WrapAlignment.center,
               children: [
@@ -244,7 +260,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(150, 50),
                     backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 ElevatedButton.icon(
@@ -254,7 +271,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(150, 50),
                     backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ],
@@ -275,7 +293,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(150, 50),
                     backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ],
