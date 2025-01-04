@@ -33,14 +33,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authorizationHeader.substring(7);
 
             try {
+                // Kiểm tra token hết hạn
+                if (jwtTokenUtil.isTokenExpired(token)) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token đã hết hạn");
+                    return; // Dừng chuỗi lọc
+                }
+
                 // Lấy username và vai trò từ token
                 String username = jwtTokenUtil.extractUsername(token);
                 List<String> roles = jwtTokenUtil.extractRoles(token);
-
-                // Kiểm tra nếu token hết hạn
-                if (jwtTokenUtil.isTokenExpired(token)) {
-                    throw new ExpiredJwtException(null, null, "Token đã hết hạn");
-                }
 
                 // Thêm vai trò vào SecurityContext
                 if (username != null && roles != null) {
@@ -55,18 +56,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } catch (ExpiredJwtException e) {
                 // Xử lý khi token hết hạn
-                SecurityContextHolder.clearContext();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token đã hết hạn");
-                return; // Dừng việc tiếp tục lọc yêu cầu
+                return; // Dừng chuỗi lọc
             } catch (Exception e) {
                 // Các lỗi khác (ví dụ: token không hợp lệ)
-                SecurityContextHolder.clearContext();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token không hợp lệ");
-                return; // Dừng việc tiếp tục lọc yêu cầu
+                return; // Dừng chuỗi lọc
             }
         }
-
         filterChain.doFilter(request, response);
     }
-
 }

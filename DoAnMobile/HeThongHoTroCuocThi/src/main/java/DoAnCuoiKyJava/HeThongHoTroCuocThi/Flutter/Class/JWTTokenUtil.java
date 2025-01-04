@@ -37,8 +37,8 @@ public class JWTTokenUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 giờ
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 15)) // 15 giây
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8)) // 8 giờ
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 10)) // 10 giây
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }

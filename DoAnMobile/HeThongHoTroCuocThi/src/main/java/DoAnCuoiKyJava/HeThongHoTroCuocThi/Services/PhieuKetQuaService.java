@@ -20,7 +20,6 @@ import java.util.*;
 public class PhieuKetQuaService {
     private final IPhieuKetQuaRepository phieuKetQuaRepository;
     private final IPhieuDangKyRepository phieuDangKyRepository;
-    private final PhieuDangKyService phieuDangKyService;
 
     //lấy các phiếu kết quả có trạng thái là 1 (Hiện)
     public List<PhieuKetQua> getAllPhieuKetQua() {
@@ -74,6 +73,17 @@ public class PhieuKetQuaService {
         for (PhieuKetQua pkq : getAllPhieuKetQua()) {
             if (pkq.getPhieuDangKy().getCuocThi().getId() == cuocThiId && pkq.getPhieuDangKy().getUser().getId() == userId) {
                 return String.valueOf(pkq.getDiem());
+            }
+        }
+        return null;
+    }
+
+    // Hàm Lấy PhieuKetQua theo pdk
+    public PhieuKetQua getPhieuKetQuaByPhieuDangKyid(Long id) {
+        PhieuDangKy phieuDangKy = phieuDangKyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(""));
+        for (PhieuKetQua pkq : getAllPhieuKetQua()) {
+            if (pkq.getPhieuDangKy() == phieuDangKy) {
+                return pkq;
             }
         }
         return null;
@@ -206,4 +216,6 @@ public class PhieuKetQuaService {
             phieuKetQuaRepository.save(pkq);
         }
     }
+
+
 }

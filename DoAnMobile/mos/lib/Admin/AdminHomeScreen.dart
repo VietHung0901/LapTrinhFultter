@@ -1,37 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:mos/Account/LoginScreen.dart';
 import 'package:mos/Admin/AdminCuocThi.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mos/ApiService/Auth/AuthService.dart';
 
 class AdminHomeScreen extends StatelessWidget {
-  // Hàm logout
-  Future<void> logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');  // Xóa token khỏi SharedPreferences
-
-    // Điều hướng về màn hình đăng nhập
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
-  }
-
+final AuthService authservice;
+  AdminHomeScreen({Key? key, required this.authservice}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Admin Dashboard",
+          "Trang chủ Admin",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blueAccent,
         elevation: 4.0,
         actions: [
-          // Thêm icon Logout trên appBar
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
-              logout(context);  // Xử lý logout khi nhấn vào biểu tượng
+              authservice.logout(context);  // Xử lý logout khi nhấn vào biểu tượng
             },
           ),
         ],
@@ -43,7 +31,7 @@ class AdminHomeScreen extends StatelessWidget {
           children: [
             // Title: Welcome message
             const Text(
-              'Welcome, Admin!',
+              'Xin chào, Admin!',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -52,7 +40,6 @@ class AdminHomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // Card with "Manage Contestants"
             _buildCard(
               context,
               title: 'Quản lý cuộc thi',
@@ -70,21 +57,20 @@ class AdminHomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Card with "Manage Scores"
-            _buildCard(
-              context,
-              title: 'Manage Scores',
-              icon: Icons.score,
-              onPressed: () {
-                // Handle managing scores
-              },
-            ),
+            // _buildCard(
+            //   context,
+            //   title: 'Manage Scores',
+            //   icon: Icons.score,
+            //   onPressed: () {
+            //     // Handle managing scores
+            //   },
+            // ),
           ],
         ),
       ),
     );
   }
 
-  // Helper method to create cards
   Widget _buildCard(BuildContext context,
       {required String title,
       required IconData icon,

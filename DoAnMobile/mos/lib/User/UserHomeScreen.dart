@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:mos/Account/LoginScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mos/ApiService/Auth/AuthService.dart';
+import 'package:mos/User/UserCuocThi.dart';
 
 class UserHomeScreen extends StatelessWidget {
-  // Hàm logout
-  Future<void> logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');  // Xóa token khỏi SharedPreferences
-
-    // Điều hướng về màn hình đăng nhập
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
-  }
+  final AuthService authservice;
+  UserHomeScreen({Key? key, required this.authservice}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Contestant Dashboard",
+          "Trang chủ",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Colors.blueAccent,
         elevation: 4.0,
         actions: [
           // Thêm icon Logout trên appBar
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
-              logout(context);  // Xử lý logout khi nhấn vào biểu tượng
+              authservice.logout(context); // Xử lý logout khi nhấn vào biểu tượng
             },
           ),
         ],
@@ -42,19 +33,34 @@ class UserHomeScreen extends StatelessWidget {
           children: [
             // Welcome message
             const Text(
-              'Welcome, Contestant!',
+              'Xin chào, thí sinh!',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.orangeAccent,
+                color: Colors.blueAccent,
               ),
             ),
             const SizedBox(height: 40),
 
+            _buildCard(
+              context,
+              title: 'Quản lý cuộc thi',
+              icon: Icons.emoji_events,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CuocThiListScreen()), // Điều hướng đến màn hình danh sách cuộc thi
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
             // Card with "View Exam Results"
             _buildCard(
               context,
-              title: 'View Exam Results',
+              title: 'Tra kết quả',
               icon: Icons.assignment_turned_in,
               onPressed: () {
                 // Xem kết quả thi
@@ -66,7 +72,6 @@ class UserHomeScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to create cards
   Widget _buildCard(BuildContext context, {required String title, required IconData icon, required VoidCallback onPressed}) {
     return Card(
       elevation: 8.0,
@@ -78,7 +83,7 @@ class UserHomeScreen extends StatelessWidget {
         leading: Icon(
           icon,
           size: 40,
-          color: Colors.orangeAccent,
+          color: Colors.blueAccent,
         ),
         title: Text(
           title,
@@ -88,7 +93,7 @@ class UserHomeScreen extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        trailing: const Icon(Icons.arrow_forward, color: Colors.orangeAccent),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.blueAccent),
         onTap: onPressed,
       ),
     );

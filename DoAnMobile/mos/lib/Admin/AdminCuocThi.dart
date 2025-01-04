@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-
 import 'package:mos/Admin/AdminDetailCuocThi.dart';
+import 'package:mos/ApiService/Auth/AuthService.dart';
 import 'package:mos/ApiService/HTTPService.dart';
 import 'package:mos/Class/StringURL.dart';
 
@@ -14,24 +14,56 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
   bool _isLoading = true;
   List<dynamic> _contests = [];
   final HTTPService httpService = HTTPService();
-  
+  AuthService authservice = AuthService();
+
   // Gọi API tải cuộc thi
   Future<void> _fetchContests() async {
     setState(() {
       _isLoading = true;
     });
 
-    try {
-      final response = await httpService.get(StringURL().admincuocthi + '/list');
+    final response = await httpService.get(StringURL().admincuocthi + '/list');
 
+    try{
       if (response.statusCode == 200) {
-        setState(() {
-          _contests = json.decode(response.body);
-          _isLoading = false;
-        });
+
+        // dùng utf8 để có thể giải mã tiếng Việt
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final responseData = json.decode(decodedResponse);
+        // final responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          if (responseData['message'] != null) {
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(responseData['message'])),
+            // );
+          }
+          setState(() {
+            // Lấy danh sách cuộc thi từ phần "data"
+            _contests = responseData['data'];
+            _isLoading = false;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
+        }
       } else {
-        // throw Exception('Failed to load contests');
-        throw Exception(response.statusCode);
+        if (response.statusCode == 401) {
+          await authservice.logout(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Hết phiên đăng nhập, vui lòng đăng nhập lại!')),
+          );
+        } else if (response.statusCode == 403)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Bạn không có quyền truy cập tài nguyên này.')),
+          );
+        else
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Lỗi không xác định: ${response.statusCode}')),
+          );
       }
     } catch (e) {
       setState(() {
@@ -42,7 +74,7 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
       );
     }
   }
-
+  
   @override
   void initState() {
     super.initState();
@@ -95,7 +127,6 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon đại diện cho cuộc thi
             Container(
               width: 70,
               height: 70,
@@ -121,10 +152,8 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tên cuộc thi và ID
                   Row(
                     children: [
-                      // ID cuộc thi
                       Text(
                         'ID: ${contest['id']}',
                         style: TextStyle(
@@ -134,7 +163,6 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Tên cuộc thi
                       Text(
                         contest['tenCuocThi'],
                         style: TextStyle(
@@ -146,7 +174,6 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Ngày thi
                   Text(
                     'Ngày thi: ${contest['ngayThi']}',
                     style: TextStyle(
@@ -157,7 +184,6 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
                 ],
               ),
             ),
-            // Mũi tên chỉ dẫn
             Icon(
               Icons.arrow_forward_ios,
               color: Colors.blueAccent,

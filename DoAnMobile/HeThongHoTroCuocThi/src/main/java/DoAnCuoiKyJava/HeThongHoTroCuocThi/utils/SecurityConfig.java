@@ -2,7 +2,6 @@ package DoAnCuoiKyJava.HeThongHoTroCuocThi.utils;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Services.OAuthService;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Services.UserService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationManagerResolver;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import javax.servlet.http.HttpServletResponse;
 
 
 @Configuration
@@ -61,14 +57,28 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**")
                             .permitAll()
 
-                        .requestMatchers("/api/ADMIN/CuocThi/**", "/api/ADMIN/PhieuKetQua/**")
+                        .requestMatchers("/api/ADMIN/CuocThi/**", "/api/ADMIN/PhieuKetQua/**", "/api/ADMIN/PhieuDangKy/**")
                             .hasAnyAuthority("ADMIN", "MANAGER")
+
+                        .requestMatchers("/api/USER/CuocThi/**")
+                        .hasAnyAuthority("USER")
 
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/403")
+                        // Xử lý lỗi 401 (Unauthorized)
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Bạn cần đăng nhập để truy cập tài nguyên này\"}");
+                        })
+                        // Xử lý lỗi 403 (Forbidden)
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Bạn không có quyền truy cập tài nguyên này\"}");
+                        })
                 )
                 .build();
     }

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mos/Account/LoginScreen.dart';
 import 'package:mos/Class/LoginRequest.dart';
 import 'package:mos/Class/LoginResponse.dart';
 import 'package:mos/Class/StringURL.dart';
@@ -37,5 +39,16 @@ class AuthService {
       final error = jsonDecode(response.body);
       throw Exception(error['message']);
     }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token'); // Xóa token khỏi SharedPreferences
+
+    // Điều hướng về màn hình đăng nhập
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
   }
 }

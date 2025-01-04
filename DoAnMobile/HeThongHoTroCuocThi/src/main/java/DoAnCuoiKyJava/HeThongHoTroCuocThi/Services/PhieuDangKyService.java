@@ -1,6 +1,7 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Services;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities.*;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuDangKyList;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.IPhieuDangKyRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.ITruongRepository;
@@ -25,6 +26,7 @@ public class PhieuDangKyService {
     private final IPhieuDangKyRepository phieuDangKyRepository;
     private final UserService userService;
     private final ITruongRepository truongRepository;
+    private final PhieuKetQuaService phieuKetQuaService;
 
     public List<PhieuDangKy> getAllPhieuDangKys() {
         return phieuDangKyRepository.findAll();
@@ -154,6 +156,8 @@ public class PhieuDangKyService {
                     // Nếu có mã phiếu trong cuộc thi sẽ kiểm tra tiếp đến thông tin (cccd và họ tên)
                     if (!pkq.getCccd().equals(pdkCuocThi.getUser().getCccd()) || !pkq.getHoTen().equals(pdkCuocThi.getUser().getHoten())) {
                         ketQua = 2; // Sai thông tin nếu không khớp CCCD hoặc Họ tên
+                    } else if(phieuKetQuaService.getPhieuKetQuaByPhieuDangKyid(Long.parseLong(pkq.getMaPhieu())) != null){
+                        ketQua = 4;
                     } else {
                         ketQua = 1; // Nếu mọi thứ khớp, thì kết quả là chính xác
                         break; // Thoát khỏi vòng lặp nếu đã tìm thấy kết quả chính xác
@@ -161,5 +165,17 @@ public class PhieuDangKyService {
             listKetQua.add(ketQua);
         }
         return listKetQua;
+    }
+
+    public PhieuDangKyList mapToPhieuDangKyList(PhieuDangKy pdk){
+        PhieuDangKyList pdkList = new PhieuDangKyList();
+        pdkList.setId(pdk.getId());
+        pdkList.setTenCuocThi(pdk.getCuocThi().getTenCuocThi());
+        pdkList.setCccd(pdk.getUser().getCccd());
+        pdkList.setHoTen(pdk.getUser().getHoten());
+        PhieuKetQua pkq = phieuKetQuaService.getPhieuKetQuaByPhieuDangKyid(pdk.getId());
+        if(pkq != null)
+            pdkList.setDiem(pkq.getDiem());
+        return pdkList;
     }
 }

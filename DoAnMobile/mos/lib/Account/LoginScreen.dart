@@ -36,13 +36,13 @@ class _LoginScreenState extends State<LoginScreen> {
         // Điều hướng đến trang Home cho Admin
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+          MaterialPageRoute(builder: (context) => AdminHomeScreen(authservice: authService,)),
         );
       } else if (response.role == "USER") {
         // Điều hướng đến trang Home cho Thí sinh
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => UserHomeScreen()),
+          MaterialPageRoute(builder: (context) => UserHomeScreen(authservice: authService,)),
         );
       }
     } catch (e) {

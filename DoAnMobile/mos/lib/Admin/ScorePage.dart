@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mos/ApiService/Auth/AuthService.dart';
 import 'package:mos/ApiService/HTTPService.dart';
 import 'package:mos/Class/StringURL.dart';
 
@@ -17,7 +18,9 @@ class ScorePage extends StatefulWidget {
 class _ScorePageState extends State<ScorePage> {
   late List<Map<String, dynamic>> scoreTable;
   final HTTPService httpService = HTTPService();
+  AuthService authservice = AuthService();
   bool isAllCorrect = false; // Biến trạng thái để kiểm tra tất cả đều đúng
+  bool bienXemDiem = false;
 
   @override
   void initState() {
@@ -26,68 +29,120 @@ class _ScorePageState extends State<ScorePage> {
   }
 
 // Hàm kiểm tra thông tin
-  Future<List<Map<String, dynamic>>> kiemTraDanhSach() async {
+  Future<void> kiemTraDanhSach() async {
+    List<Map<String, dynamic>> jsonList = scoreTable;
+    final response = await httpService.putList(
+      StringURL().adminphieuketqua +
+          '/kiem-tra-danh-sach?cuocThiId=${widget.contestId}', // Thêm cuocThiId vào URL
+      jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
+    );
+
     try {
-      // Tạo danh sách các phiếu kết quả dưới dạng JSON
-      List<Map<String, dynamic>> jsonList = scoreTable;
-
-      // Gửi yêu cầu PUT đến API
-      final response = await httpService.putList(
-        StringURL().adminphieuketqua + '/kiem-tra-danh-sach?cuocThiId=${widget.contestId}', // Thêm cuocThiId vào URL
-        jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
-      );
-
-      // Kiểm tra xem yêu cầu có thành công không (mã trạng thái HTTP 200)
       if (response.statusCode == 200) {
-        // Nếu thành công, trả về danh sách kết quả kiểm tra từ API
-        List<dynamic> responseBody = jsonDecode(response.body);
+        final responseData = json.decode(response.body);
 
-        // Cập nhật trạng thái cho mỗi phiếu kết quả trong scoreTable
-        for (int i = 0; i < responseBody.length; i++) {
-          if (i < scoreTable.length) {
-            setState(() {
-              scoreTable[i]['trangThai'] =
-                  responseBody[i]; // Cập nhật trangThai từ dữ liệu trả về
-            });
+        if (responseData['status'] == 'success') {
+          if (responseData['message'] != null) {
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(responseData['message'])),
+            // );
           }
+          List<dynamic> responseBody = responseData['data'];
+          for (int i = 0; i < responseBody.length; i++) {
+            if (i < scoreTable.length) {
+              setState(() {
+                scoreTable[i]['trangThai'] =
+                    responseBody[i]; // Cập nhật trangThai từ dữ liệu trả về
+              });
+            }
+          }
+          setState(() {
+            isAllCorrect = scoreTable.every((entry) =>
+                entry['trangThai'] == 1); // Kiểm tra tất cả trạng thái
+                bienXemDiem = scoreTable.every((entry) =>
+                entry['trangThai'] == 4); // Kiểm tra tất cả trạng thái
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
         }
-
-        // Kiểm tra xem tất cả các trạng thái có phải là 1 (Chính Xác) không
-        setState(() {
-          isAllCorrect = scoreTable.every(
-              (entry) => entry['trangThai'] == 1); // Kiểm tra tất cả trạng thái
-        });
-
-        return scoreTable;
       } else {
-        // Nếu không thành công, ném lỗi
-        throw Exception('Lỗi khi gọi API: ${response.statusCode}');
+        if (response.statusCode == 401) {
+          await authservice.logout(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Hết phiên đăng nhập, vui lòng đăng nhập lại!')),
+          );
+        } else if (response.statusCode == 403)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Bạn không có quyền truy cập tài nguyên này.')),
+          );
+        else
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Lỗi không xác định: ${response.statusCode}')),
+          );
       }
     } catch (e) {
-      throw Exception('Có lỗi xảy ra: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e')),
+      );
     }
   }
-  
+
   // Hàm nhập điểm
-  Future<String> nhapDanhSachPhieuKetQua() async {
+  Future<void> nhapDanhSachPhieuKetQua() async {
     List<Map<String, dynamic>> jsonList = scoreTable;
 
-    // Gửi yêu cầu POST đến API
+    final response = await httpService.postList(
+      StringURL().adminphieuketqua +
+          '/nhap-danh-sach', // Thêm cuocThiId vào URL
+      jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
+    );
+
     try {
-      final response = await httpService.postList(
-        StringURL().adminphieuketqua + '/nhap-danh-sach', // Thêm cuocThiId vào URL
-        jsonList, // Chuyển đổi danh sách phiếu kết quả thành chuỗi JSON
-      );
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body)),
-        );
-        return response.body; // Trả về thông báo từ server
+        // dùng utf8 để có thể giải mã tiếng Việt
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final responseData = json.decode(decodedResponse);
+        // final responseData = json.decode(response.body);
+
+        if (responseData['status'] == 'success') {
+          if (responseData['message'] != null) {
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(responseData['message'])),
+            // );
+            kiemTraDanhSach();
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
+        }
       } else {
-        throw Exception('Lỗi: ${response.statusCode} - ${response.body}');
+        if (response.statusCode == 401) {
+          await authservice.logout(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Hết phiên đăng nhập, vui lòng đăng nhập lại!')),
+          );
+        } else if (response.statusCode == 403)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Bạn không có quyền truy cập tài nguyên này.')),
+          );
+        else
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Lỗi không xác định: ${response.statusCode}')),
+          );
       }
     } catch (e) {
-      throw Exception('Lỗi khi gọi API: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e')),
+      );
     }
   }
 
@@ -99,6 +154,8 @@ class _ScorePageState extends State<ScorePage> {
       return Colors.green; // Xanh lá nếu chính xác
     } else if (trangThai == 2) {
       return Colors.red; // Đỏ nếu sai thông tin
+    } else if (trangThai == 4) {
+      return Colors.blue; // Đỏ nếu sai thông tin
     } else {
       return Colors.black; // Màu đen nếu không xác định được trạng thái
     }
@@ -111,9 +168,18 @@ class _ScorePageState extends State<ScorePage> {
       return 'Chính Xác';
     } else if (trangThai == 2) {
       return 'Sai Thông Tin';
+    } else if (trangThai == 4) {
+      return 'Đã có điểm';
     } else {
       return 'Không Xác Định'; // Trường hợp không có giá trị hợp lệ
     }
+  }
+
+  void _xoaDoiTuong(String maPhieu) {
+    setState(() {
+      // Xóa đối tượng có maPhieu tương ứng khỏi scoreTable
+      scoreTable.removeWhere((entry) => entry['maPhieu'] == maPhieu);
+    });
   }
 
   @override
@@ -135,7 +201,7 @@ class _ScorePageState extends State<ScorePage> {
                     // Cuộn ngang cho bảng
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      columnSpacing: 20, // Tăng khoảng cách giữa các cột
+                      columnSpacing: 20,
                       headingTextStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.blueAccent,
@@ -167,10 +233,13 @@ class _ScorePageState extends State<ScorePage> {
                           label: Text('Trạng Thái',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
+                        DataColumn(
+                          label: Text('Xóa',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
                       ],
                       rows: scoreTable.map((entry) {
-                        int trangThai = entry['trangThai'] ??
-                            -1; // Lấy trang thái hoặc gán -1 nếu không có
+                        int trangThai = entry['trangThai'] ?? -1;
                         return DataRow(
                           cells: [
                             DataCell(Text(entry['maPhieu'] ?? '')),
@@ -189,9 +258,17 @@ class _ScorePageState extends State<ScorePage> {
                               Text(
                                 _getTrangThai(trangThai),
                                 style: TextStyle(
-                                  color: _getTrangThaiColor(
-                                      trangThai), // Đổi màu dựa trên trạng thái
+                                  color: _getTrangThaiColor(trangThai),
                                 ),
+                              ),
+                            ),
+                            // Cột Xóa
+                            DataCell(
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  _xoaDoiTuong(entry['maPhieu']); // Gọi hàm xóa
+                                },
                               ),
                             ),
                           ],
@@ -202,16 +279,7 @@ class _ScorePageState extends State<ScorePage> {
                   SizedBox(height: 20), // Khoảng cách giữa bảng và nút
                   ElevatedButton(
                     onPressed: () {
-                      kiemTraDanhSach().then((_) {
-                        // Sau khi kiểm tra thành công, refresh lại giao diện
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Đã kiểm tra bảng điểm')),
-                        );
-                      }).catchError((e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Lỗi: $e')),
-                        );
-                      });
+                      kiemTraDanhSach();
                     },
                     child: Text('Kiểm Tra Thông Tin'),
                     style: ElevatedButton.styleFrom(
@@ -228,6 +296,19 @@ class _ScorePageState extends State<ScorePage> {
                         nhapDanhSachPhieuKetQua();
                       },
                       child: Text('Nhập Điểm'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      ),
+                    ),
+                  // Nếu tất cả trạng thái đều là 4, hiển thị thêm nút Xem bảng điểm
+                  if (bienXemDiem)
+                    ElevatedButton(
+                      onPressed: () {
+                        // chuyển tới trang xem bảng điểm
+                      },
+                      child: Text('Xem bảng điểm'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding:
