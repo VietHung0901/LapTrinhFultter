@@ -1,21 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mos/Admin/RankingPage.dart';
 import 'package:mos/ApiService/Auth/AuthService.dart';
 import 'package:mos/ApiService/HTTPService.dart';
 import 'package:mos/Class/PhieuDangKy.dart';
 import 'package:mos/Class/StringURL.dart';
+import 'package:mos/User/RankingPage.dart';
 
-class ResultPage extends StatefulWidget {
-  final int cuocThiId;
-
-  ResultPage({required this.cuocThiId});
-
+class PhieuDangKyPage extends StatefulWidget {
+  
   @override
-  _ResultPageState createState() => _ResultPageState();
+  _PhieuDangKyPageState createState() => _PhieuDangKyPageState();
 }
 
-class _ResultPageState extends State<ResultPage> {
+class _PhieuDangKyPageState extends State<PhieuDangKyPage> {
   List<PhieuDangKy> data = [];
   bool _isLoading = true;
   final HTTPService httpService = HTTPService();
@@ -28,8 +25,8 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   Future<void> fetchData() async {
-    final response = await httpService.get(
-        StringURL().adminphieudangky + '/list?cuocThiId=${widget.cuocThiId}');
+    final response =
+        await httpService.get(StringURL().userphieudangky + '/list');
 
     try {
       if (response.statusCode == 200) {
@@ -115,6 +112,7 @@ class _ResultPageState extends State<ResultPage> {
                         DataColumn(label: Text('Cuộc Thi')),
                         DataColumn(label: Text('CCCD')),
                         DataColumn(label: Text('Kết quả')),
+                        DataColumn(label: Text('Hành động')),
                       ],
                       rows: data.asMap().entries.map((entry) {
                         int index = entry.key;
@@ -142,6 +140,23 @@ class _ResultPageState extends State<ResultPage> {
                                 ),
                               ),
                             ),
+                            DataCell(
+                              TextButton(
+                                onPressed: () {
+                                  // Hành động khi nhấn nút
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RankingPage(cuocThiId: item.cuocThiId),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Xem',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                            ),
                           ],
                         );
                       }).toList(),
@@ -150,16 +165,6 @@ class _ResultPageState extends State<ResultPage> {
                 ),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => RankingPage(cuocThiId: widget.cuocThiId)),
-          );
-        },
-        backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.leaderboard),
-      ),
     );
   }
 }

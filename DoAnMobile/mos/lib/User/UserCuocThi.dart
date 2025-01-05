@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import 'package:mos/Admin/AdminDetailCuocThi.dart';
+import 'package:mos/User/UserDetailCuocThi.dart';
 import 'package:mos/ApiService/Auth/AuthService.dart';
 import 'package:mos/ApiService/HTTPService.dart';
 import 'package:mos/Class/StringURL.dart';
@@ -34,9 +34,9 @@ class _CuocThiListScreenState extends State<CuocThiListScreen> {
         // final responseData = json.decode(response.body);
         if (responseData['status'] == 'success') {
           if (responseData['message'] != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(responseData['message'])),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(responseData['message'])),
+            // );
           }
           setState(() {
             // Lấy cuộc thi từ phần "data"

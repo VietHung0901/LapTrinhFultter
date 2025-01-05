@@ -1,13 +1,15 @@
 class PhieuDangKy {
   final int id;
   final String tenCuocThi;
+  final int cuocThiId;
   final String cccd;
   final String hoTen;
-  final int diem;
+  final String diem;
 
   PhieuDangKy({
     required this.id,
     required this.tenCuocThi,
+    required this.cuocThiId,
     required this.cccd,
     required this.hoTen,
     required this.diem,
@@ -18,6 +20,7 @@ class PhieuDangKy {
     return PhieuDangKy(
       id: json['id'],
       tenCuocThi: json['tenCuocThi'],
+      cuocThiId: json['cuocThiId'],
       cccd: json['cccd'],
       hoTen: json['hoTen'],
       diem: json['diem'],

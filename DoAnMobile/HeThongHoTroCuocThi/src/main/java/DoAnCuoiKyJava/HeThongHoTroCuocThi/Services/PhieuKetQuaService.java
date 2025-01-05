@@ -217,5 +217,14 @@ public class PhieuKetQuaService {
         }
     }
 
-
+    public DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest mapToPhieuKetQuaRequestApi (PhieuKetQua pkq){
+        DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest pkqRequest = new DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.PhieuKetQuaRequest();
+        pkqRequest.setMaPhieu(pkq.getId().toString());
+        pkqRequest.setHoTen(pkq.getPhieuDangKy().getUser().getHoten());
+        pkqRequest.setCccd(pkq.getPhieuDangKy().getUser().getCccd());
+        pkqRequest.setPhut(pkq.getPhut());
+        pkqRequest.setGiay(pkq.getGiay());
+        pkqRequest.setDiem(pkq.getDiem());
+        return pkqRequest;
+    }
 }

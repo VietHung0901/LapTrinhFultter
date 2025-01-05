@@ -7,11 +7,8 @@ import lombok.*;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class PhieuDangKyList {
+public class NoiDungRequest {
     private Long id;
-    private String tenCuocThi;
-    private Long cuocThiId;
-    private String cccd;
-    private String hoTen;
-    private String Diem;
+    private String tenNoiDung;
+    private String moTa;
 }

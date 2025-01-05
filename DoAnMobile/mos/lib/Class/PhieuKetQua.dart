@@ -22,4 +22,15 @@ class PhieuKetQua {
   String toString() {
     return 'Mã phiếu: $maPhieu, CCCD: $cccd, Họ tên: $hoTen, Thời gian: $phut phút $giay giây, Điểm: $diem';
   }
+
+  factory PhieuKetQua.fromJson(Map<String, dynamic> json) {
+    return PhieuKetQua(
+      maPhieu: json['maPhieu'],
+      cccd: json['cccd'],
+      hoTen: json['hoTen'],
+      phut: json['phut'],
+      giay: json['giay'],
+      diem: json['diem'],
+    );
+  }
 }

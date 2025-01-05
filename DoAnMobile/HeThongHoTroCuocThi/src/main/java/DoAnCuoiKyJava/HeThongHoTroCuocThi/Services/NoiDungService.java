@@ -1,6 +1,7 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Services;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities.NoiDung;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.NoiDungRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.INoiDungRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Request.NoiDungCreateRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -128,5 +129,12 @@ public class NoiDungService {
         return "/uploads/exercise/" + fileName;
     }
 
+    public NoiDungRequest mapToNoiDungRequest(NoiDung noiDung) {
+        NoiDungRequest noiDungRequest = new NoiDungRequest();
+        noiDungRequest.setId(noiDung.getId());
+        noiDungRequest.setTenNoiDung(noiDung.getTenNoiDung());
+        noiDungRequest.setMoTa(noiDung.getMoTaNoiDung());
+        return noiDungRequest;
+    }
 }
 

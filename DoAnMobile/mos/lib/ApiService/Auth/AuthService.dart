@@ -28,7 +28,6 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-
       // Parse JSON khi đăng nhập thành công
       final json = jsonDecode(response.body);
       saveToken(LoginResponse.fromJson(json).token);
@@ -45,10 +44,11 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token'); // Xóa token khỏi SharedPreferences
 
-    // Điều hướng về màn hình đăng nhập
-    Navigator.pushReplacement(
+    // Điều hướng về màn hình đăng nhập và xóa toàn bộ lịch sử điều hướng
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
+      (Route<dynamic> route) => false, // Điều kiện xóa toàn bộ route
     );
   }
 }

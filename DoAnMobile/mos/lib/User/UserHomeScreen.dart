@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mos/ApiService/Auth/AuthService.dart';
+import 'package:mos/User/PhieuDangKy.dart';
 import 'package:mos/User/UserCuocThi.dart';
 
 class UserHomeScreen extends StatelessWidget {
@@ -44,7 +45,7 @@ class UserHomeScreen extends StatelessWidget {
 
             _buildCard(
               context,
-              title: 'Quản lý cuộc thi',
+              title: 'Danh sách cuộc thi',
               icon: Icons.emoji_events,
               onPressed: () {
                 Navigator.push(
@@ -60,10 +61,15 @@ class UserHomeScreen extends StatelessWidget {
             // Card with "View Exam Results"
             _buildCard(
               context,
-              title: 'Tra kết quả',
+              title: 'Phiếu đăng ký',
               icon: Icons.assignment_turned_in,
               onPressed: () {
-                // Xem kết quả thi
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PhieuDangKyPage()), // Điều hướng đến màn hình danh sách cuộc thi
+                );
               },
             ),
           ],

@@ -171,11 +171,14 @@ public class PhieuDangKyService {
         PhieuDangKyList pdkList = new PhieuDangKyList();
         pdkList.setId(pdk.getId());
         pdkList.setTenCuocThi(pdk.getCuocThi().getTenCuocThi());
+        pdkList.setCuocThiId(pdk.getCuocThi().getId());
         pdkList.setCccd(pdk.getUser().getCccd());
         pdkList.setHoTen(pdk.getUser().getHoten());
         PhieuKetQua pkq = phieuKetQuaService.getPhieuKetQuaByPhieuDangKyid(pdk.getId());
         if(pkq != null)
-            pdkList.setDiem(pkq.getDiem());
+            pdkList.setDiem(String.valueOf(pkq.getDiem()));
+        else
+            pdkList.setDiem("Chưa có");
         return pdkList;
     }
 }

@@ -1,6 +1,7 @@
 package DoAnCuoiKyJava.HeThongHoTroCuocThi.Services;
 
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Entities.QuyDinh;
+import DoAnCuoiKyJava.HeThongHoTroCuocThi.Flutter.Request.QuyDinhRequest;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Repositories.IQuyDinhRepository;
 import DoAnCuoiKyJava.HeThongHoTroCuocThi.Request.QuyDinhCreateRequest;
 import lombok.RequiredArgsConstructor;
@@ -95,5 +96,13 @@ public class QuyDinhService {
 
         quyDinh.setTrangThai(quyDinh.getTrangThai() == 0 ? 1 : 0);
         quyDinhRepository.save(quyDinh);
+    }
+
+    public QuyDinhRequest mapToQuyDinhRequest(QuyDinh quyDinh) {
+        QuyDinhRequest quyDinhRequest = new QuyDinhRequest();
+        quyDinhRequest.setId(quyDinh.getId());
+        quyDinhRequest.setTenQuyDinh(quyDinh.getTenQuyDinh());
+        quyDinhRequest.setMoTa(quyDinh.getMoTaQuyDinh());
+        return quyDinhRequest;
     }
 }

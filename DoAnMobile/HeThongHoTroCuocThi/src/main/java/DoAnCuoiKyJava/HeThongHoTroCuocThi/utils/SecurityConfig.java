@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/ADMIN/CuocThi/**", "/api/ADMIN/PhieuKetQua/**", "/api/ADMIN/PhieuDangKy/**")
                             .hasAnyAuthority("ADMIN", "MANAGER")
 
-                        .requestMatchers("/api/USER/CuocThi/**")
+                        .requestMatchers("/api/USER/CuocThi/**", "/api/USER/NoiDung/**", "/api/USER/QuyDinh/**", "/api/USER/PhieuDangKy/**", "/api/USER/PhieuKetQua/**")
                         .hasAnyAuthority("USER")
 
                         .anyRequest().authenticated()

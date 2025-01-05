@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -67,10 +68,15 @@ public class AdminFlutterPhieuKetQuaController {
         try {
             CuocThi cuocThi = cuocThiService.getCuocThiById(cuocThiId).orElse(null);
             List<PhieuKetQua> list = phieuKetQuaService.getAllPhieuKetQuastheoCuocThi(cuocThi);
+            List<PhieuKetQuaRequest> listApi = new ArrayList<>();
+            for(PhieuKetQua pkq : list) {
+                PhieuKetQuaRequest request = phieuKetQuaService.mapToPhieuKetQuaRequestApi(pkq);
+                listApi.add(request);
+            }
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "message", "Lấy bảng kết quả thành công.",
-                    "data", list
+                    "data", listApi
             ));
         } catch (Exception e) {
             // Xử lý lỗi và trả về phản hồi thất bại

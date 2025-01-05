@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mos/Admin/RankingPage.dart';
 import 'package:mos/ApiService/Auth/AuthService.dart';
 import 'package:mos/ApiService/HTTPService.dart';
 import 'package:mos/Class/StringURL.dart';
@@ -39,8 +40,9 @@ class _ScorePageState extends State<ScorePage> {
 
     try {
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-
+        // final responseData = json.decode(response.body);
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final responseData = json.decode(decodedResponse);
         if (responseData['status'] == 'success') {
           if (responseData['message'] != null) {
             // ScaffoldMessenger.of(context).showSnackBar(
@@ -59,7 +61,7 @@ class _ScorePageState extends State<ScorePage> {
           setState(() {
             isAllCorrect = scoreTable.every((entry) =>
                 entry['trangThai'] == 1); // Kiểm tra tất cả trạng thái
-                bienXemDiem = scoreTable.every((entry) =>
+            bienXemDiem = scoreTable.every((entry) =>
                 entry['trangThai'] == 4); // Kiểm tra tất cả trạng thái
           });
         } else {
@@ -307,10 +309,16 @@ class _ScorePageState extends State<ScorePage> {
                     ElevatedButton(
                       onPressed: () {
                         // chuyển tới trang xem bảng điểm
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  RankingPage(cuocThiId: widget.contestId)),
+                        );
                       },
                       child: Text('Xem bảng điểm'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.yellow,
                         padding:
                             EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       ),

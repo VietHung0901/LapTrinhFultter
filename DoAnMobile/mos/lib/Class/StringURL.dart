@@ -6,4 +6,8 @@ class StringURL{
   String adminphieudangky = "/api/ADMIN/PhieuDangKy";
 
   String usercuocthi = "/api/USER/CuocThi";
+  String usernoidung = "/api/USER/NoiDung";
+  String userquydinh = "/api/USER/QuyDinh";
+  String userphieuketqua = "/api/USER/PhieuKetQua";
+  String userphieudangky = "/api/USER/PhieuDangKy";
 }
